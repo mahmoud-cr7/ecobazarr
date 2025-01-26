@@ -10,6 +10,8 @@ import logoPng from "../../assets/logo.png";
 import "./NavBar.css";
 import { Button } from "@mui/material";
 import Colors from "../../utils/Colors";
+import { Link } from "react-router-dom";
+import TemporaryDrawer from "../drawer/Drawer";
 interface NavBarProps {
   // Define your props here
 }
@@ -17,6 +19,7 @@ interface NavBarProps {
 const NavBar: React.FC<NavBarProps> = (props) => {
   const [isShopOpen, setIsShopOpen] = useState(false);
   const [isPagesOpen, setIsPagesOpen] = useState(false);
+  const [open, setOpen] = React.useState(false);
   return (
     <div className="navbar">
       <section className=" top">
@@ -26,11 +29,21 @@ const NavBar: React.FC<NavBarProps> = (props) => {
             Store Location: Lincoln- 344, Illinois, Chicago, USA
           </div>
           <div className="login" style={{ color: Colors.Gray6 }}>
-            <Button variant="text" style={{ color: Colors.Gray6 }}>
+            <Button
+              component={Link}
+              to="/signIn"
+              variant="text"
+              style={{ color: Colors.Gray6 }}
+            >
               Sign In
             </Button>
             /
-            <Button variant="text" style={{ color: Colors.Gray6 }}>
+            <Button
+              component={Link}
+              to="/signUp"
+              variant="text"
+              style={{ color: Colors.Gray6 }}
+            >
               Sign Up
             </Button>
           </div>
@@ -76,7 +89,12 @@ const NavBar: React.FC<NavBarProps> = (props) => {
             }}
           >
             <FavoriteBorderIcon className="icon" />|
-            <div className="shop-icon">
+            <div
+              className="shop-icon"
+              onClick={() => {
+                setOpen(!open);
+              }}
+            >
               <ShoppingBagIcon className="icon" />
             </div>
           </div>
@@ -84,7 +102,14 @@ const NavBar: React.FC<NavBarProps> = (props) => {
       </section>
       <section className="" style={{ backgroundColor: Colors.Gray8 }}>
         <div className=" bottom container">
-          <Button className="button">Home</Button>
+          <Button
+            component={Link}
+            to="/"
+            className="button"
+            style={{ color: Colors.White }}
+          >
+            Home
+          </Button>
           <div className="dropdown">
             <button
               onClick={() => {
@@ -136,6 +161,7 @@ const NavBar: React.FC<NavBarProps> = (props) => {
           <Button className="button">Contact Us</Button>
         </div>
       </section>
+      <TemporaryDrawer open={open} setOpen={setOpen} />
     </div>
   );
 };

@@ -1,0 +1,46 @@
+.sign-in {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  margin-block: 20px;
+  border-radius: 8px;
+  background-color: white;
+  width: 500px;
+}
+.sign-in h1 {
+  font-size: 40px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+.sign-in .input {
+  width: 100%;
+  margin-bottom: 10px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 16px;
+}
+.sign-in .password-container {
+  position: relative;
+  width: 100%;
+}
+.sign-in .password-container .toggle-password {
+  position: absolute;
+  right: 10px;
+  top: 45%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  user-select: none;
+}
+.sign-in .remember-me {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+.sign-in button {
+  margin-bottom: 20px;
+}
