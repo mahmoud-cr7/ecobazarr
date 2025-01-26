@@ -1,0 +1,135 @@
+@import "tailwindcss";
+.navbar {
+  font-size: 10px;
+}
+/* top Nav Bar */
+.location {
+  display: flex;
+  align-items: center;
+  font-size: 7px;
+}
+
+.section {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+.section.top {
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.location .icon {
+  width: 10px;
+}
+.login button {
+  font-size: 7px;
+}
+/* mid Nav Bar */
+.mid {
+  padding-block: 10px;
+}
+.mid .logo {
+  display: flex;
+  font-size: 12px;
+  align-items: center;
+  gap: 5px;
+  font-weight: bold;
+}
+.mid .logo img {
+  width: 20px;
+}
+.mid .search {
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+.mid .search .search-icon {
+  position: absolute;
+  left: 8px;
+  top: 50%;
+  width: 10px;
+  transform: translateY(-50%);
+  width: 15px;
+}
+
+.mid .search .search-input {
+  height: 22px;
+  border-top-left-radius: 4px;
+  border-bottom-left-radius: 4px;
+  padding: 0 8px 0 32px;
+  outline: none;
+  width: 180px;
+}
+.mid .search .search-button {
+  font-size: 8px;
+  height: 22px;
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+  width: 50px;
+}
+.mid .icons .icon {
+  font-size: 20px;
+  cursor: pointer;
+}
+.mid .icons .shop-icon {
+  position: relative;
+}
+.mid .icons .shop-icon::after {
+  content: "9";
+  position: absolute;
+  top: -2px;
+  right: -1px;
+  width: 2em;
+  height: 2em;
+  font-size: 0.5em;
+  background-color: #00b207;
+  color: #fff;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: bold;
+  cursor: pointer;
+}
+.mid .icons .shop-icon:hover::after {
+  transform: scale(1.2);
+  transition: transform 0.2s ease-in-out;
+}
+/* bottom Nav Bar */
+.bottom {
+  display: flex;
+  justify-content: start;
+  align-items: center;
+}
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+.bottom button {
+  height: 30px;
+  padding: 0 10px;
+  border-radius: 4px;
+  color: #fff;
+  cursor: pointer;
+  background-color: transparent;
+  font-size: 7px;
+  transition: 0.3s;
+}
+.dropdown-content {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+  z-index: 1;
+}
+.dropdown-content a {
+  color: #000;
+  padding: 8px 16px;
+  text-decoration: none;
+  display: block;
+}
+.bottom button:hover {
+  color: #000;
+}
