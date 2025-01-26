@@ -4,6 +4,10 @@
   padding: 0.8rem;
 } */
 .container {
-  margin: 0 4rem;
-  /* padding: 0.8rem; */
+  max-width: 100%;
+  margin: 0 auto;
+  padding: 0.5rem 10rem; 
 }
+/* * {
+  outline: 1px solid red;
+} */

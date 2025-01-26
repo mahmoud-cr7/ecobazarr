@@ -19,7 +19,7 @@ const NavBar: React.FC<NavBarProps> = (props) => {
   const [isPagesOpen, setIsPagesOpen] = useState(false);
   return (
     <div className="navbar">
-      <section className="section top">
+      <section className=" top">
         <div className="container section">
           <div className="location" style={{ color: Colors.Gray6 }}>
             <AddLocationIcon className="icon" />
@@ -36,7 +36,7 @@ const NavBar: React.FC<NavBarProps> = (props) => {
           </div>
         </div>
       </section>
-      <section className="section mid ">
+      <section className=" mid ">
         <div className="container section">
           <div className="logo">
             <img src={logoPng} alt="logoPng" />
@@ -82,11 +82,8 @@ const NavBar: React.FC<NavBarProps> = (props) => {
           </div>
         </div>
       </section>
-      <section
-        className="section bottom"
-        style={{ backgroundColor: Colors.Gray8 }}
-      >
-        <div className="container">
+      <section className="" style={{ backgroundColor: Colors.Gray8 }}>
+        <div className=" bottom container">
           <Button className="button">Home</Button>
           <div className="dropdown">
             <button

@@ -11,16 +11,16 @@
   gap: 2rem;
 }
 .footer .subscribe .subscribe-heading {
-  width: 200px;
+  width: 319px;
 }
 .footer .subscribe .subscribe-heading h2 {
-  font-size: 0.8rem;
+  font-size: 1.5rem;
   font-weight: bold;
   margin-bottom: 0.5rem;
 }
 
 .footer .subscribe .subscribe-heading p {
-  font-size: 0.5rem;
+  font-size: 1rem;
   line-height: 1.5;
   margin: 0;
 }
@@ -33,19 +33,19 @@
 }
 
 .footer .subscribe input[type="email"] {
-  width: 200px;
-  padding: 0.5rem;
+  width: 300px;
+  padding: 1rem;
   border: 1px solid #ddd;
   border-radius: 30px 0 0 30px;
   outline: none;
-  font-size: 0.5rem;
+  font-size: 1rem;
 }
 
 .footer .subscribe button {
   cursor: pointer;
   transition: background-color 0.3s ease;
-  font-size: 8px;
-  transform: translateX(-14px);
+  font-size: 18px;
+  transform: translateX(-35px);
 }
 
 .footer .subscribe button:hover {
@@ -65,7 +65,7 @@
 .footer .subscribe .social-icons .icon {
   cursor: pointer;
   transition: transform 0.3s ease;
-  font-size: 20px;
+  font-size: 30px;
 }
 .footer .subscribe .social-icons .icon:hover {
   transform: scale(1.2);
@@ -114,7 +114,6 @@
   gap: 5rem;
   padding: 20px;
   flex-wrap: wrap;
-  
 }
 .main-footer .footer-list .list h3 {
   font-size: 1rem;
@@ -131,12 +130,12 @@
 .main-footer .footer-list ul li:hover {
   color: #009624 !important;
 }
-.bottom-footer{
+.bottom-footer {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding-bottom: 30px;
 }
-.bottom-footer img{
+.bottom-footer img {
   width: 300px;
 }
