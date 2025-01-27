@@ -9,6 +9,11 @@ import carIcon from "../../assets/car_icon.png";
 import shopIcon from "../../assets/shop_icon.png";
 import supportIcon from "../../assets/suport_icon.png";
 import shippingIcon from "../../assets/shipping_icon.png";
+import CardsContainer from "../../components/cards-container/CardsContainer";
+import { useQuery } from "@tanstack/react-query";
+import Categories from "../../components/categories/Categories";
+import { useNavigate } from "react-router-dom";
+import Products from "../../components/products/Products";
 interface HomeProps {
   // Define your props here
 }
@@ -36,6 +41,8 @@ const shippingServices = {
 };
 
 const Home: React.FC<HomeProps> = (props) => {
+  const navigate = useNavigate();
+
   return (
     <>
       <div className="home container">
@@ -100,6 +107,26 @@ const Home: React.FC<HomeProps> = (props) => {
             );
           })}
         </div>
+      </div>
+      <div className="container">
+        <CardsContainer
+          header="Popular Categories"
+          onClick={() => {
+            navigate("/categories");
+          }}
+        >
+          <Categories />
+        </CardsContainer>
+      </div>
+      <div className="container">
+        <CardsContainer
+          header="Popular Products"
+          onClick={() => {
+            navigate("/products");
+          }}
+        >
+          <Products />
+        </CardsContainer>
       </div>
     </>
   );
