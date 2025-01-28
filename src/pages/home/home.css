@@ -91,35 +91,120 @@
   font-weight: bold;
   color: #fff;
   text-align: center;
-  width: 60%;  
+  width: 60%;
 }
 /* shipping Services */
-.services{
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    padding: 40px;
-    margin-block:10px ;
-    border-radius: 8px;
-    gap: 2rem;
+.services {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  padding: 40px;
+  margin-block: 10px;
+  border-radius: 8px;
+  gap: 2rem;
 }
-.service{
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 1rem;
+.service {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
 }
-.service img{
-    width: 35px;
-    height: 35px;
-    border: 1px solid #fff;
+.service img {
+  width: 35px;
+  height: 35px;
+  border: 1px solid #fff;
 }
-.service h3{
-    font-size: 18px;
-    font-weight: bold;
-    margin-bottom: 4px;
+.service h3 {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 4px;
 }
-.service p{
-    font-size: 14px;
-    color: #333;
+.service p {
+  font-size: 14px;
+  color: #333;
+}
+
+/* Offers */
+.offers {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  padding: 40px;
+  margin-block: 10px;
+  border-radius: 8px;
+  gap: 1rem;
+}
+.sale {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 16px;
+  text-align: center;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  background-color: #fff;
+  background-size: cover;
+  height: 60vh;
+  width: 100%;
+}
+.sale p {
+  font-size: 20px;
+  margin-block: 10px;
+}
+.sale h1 {
+  font-size: 30px;
+  font-weight: bold;
+  margin-block: 10px;
+}
+.sale-span {
+  font-weight: bold;
+  margin-inline: 5px;
+  padding: 8px;
+  border-radius: 8px;
+  background-color: #fff;
+  margin-block: 10px;
+}
+.sale-1 {
+  background-image: url(../../assets/vegetables.jpeg);
+  width: 100%;
+}
+.sale-2 {
+  background-image: url(../../assets/fruit.jpeg);
+}
+.sale-3 {
+  background-image: url(../../assets/meet.jpeg);
+}
+
+.sale img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+.countdown-timer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  border-radius: 8px;
+  margin-top: 20px;
+  font-family: Arial, sans-serif;
+}
+
+.time-section {
+  text-align: center;
+  padding: 0 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.time-value {
+  font-size: 24px;
+  font-weight: bold;
+  color: #333;
+}
+
+.time-label {
+  font-size: 14px;
+  color: #666;
+  text-transform: uppercase;
 }

@@ -7,9 +7,11 @@ interface CategoryCardProps {
 }
 
 const CategoryCard: React.FC<CategoryCardProps> = ({ name, imageUrl }) => {
+  // console.log("CategoryCard.tsx", imageUrl);
+
   return (
     <div className="card">
-      {imageUrl && <img src={imageUrl} alt={name} className="image" />}
+     <img src={imageUrl} alt={name} className="image" />
       <h3 className="name">{name}</h3>
     </div>
   );

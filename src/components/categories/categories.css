@@ -7,11 +7,12 @@
   color: #333;
   margin-bottom: 20px;
 }
-.grid {
-  display: grid;
-  grid-template-columns: repeat(5,1fr);
-  gap: 20px;
-  padding: 0 20px;
+.catigories-cards {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 25px;
+  justify-content: center;
+  align-items: center;
 }
 .loading {
   display: flex;
@@ -20,8 +21,7 @@
   margin: 0 auto;
   animation: spin 1s linear infinite;
 }
-.snackbar{
-    
+.snackbar {
 }
 @keyframes spin {
   0% {
