@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-empty-object-type */
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import AddLocationIcon from "@mui/icons-material/AddLocation";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import ShoppingBagIcon from "@mui/icons-material/ShoppingBag";
@@ -12,6 +12,8 @@ import { Button } from "@mui/material";
 import Colors from "../../utils/Colors";
 import { Link } from "react-router-dom";
 import TemporaryDrawer from "../drawer/Drawer";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { app } from "../../firebase/Firebase";
 interface NavBarProps {
   // Define your props here
 }
@@ -20,6 +22,25 @@ const NavBar: React.FC<NavBarProps> = (props) => {
   const [isShopOpen, setIsShopOpen] = useState(false);
   const [isPagesOpen, setIsPagesOpen] = useState(false);
   const [open, setOpen] = React.useState(false);
+  const [user, setUser] = useState<{ email: string } | null>(null);
+  useEffect(() => {
+    const auth = getAuth(app);
+
+    // Listen for authentication state changes
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        // User is signed in
+        setUser({ email: user.email || "" });
+      } else {
+        // User is signed out
+        setUser(null);
+      }
+    });
+
+    // Cleanup subscription on unmount
+    return () => unsubscribe();
+  }, []);
+
   return (
     <div className="navbar">
       <section className=" top">
@@ -29,23 +50,41 @@ const NavBar: React.FC<NavBarProps> = (props) => {
             Store Location: Lincoln- 344, Illinois, Chicago, USA
           </div>
           <div className="login" style={{ color: Colors.Gray6 }}>
-            <Button
-              component={Link}
-              to="/signIn"
-              variant="text"
-              style={{ color: Colors.Gray6 }}
-            >
-              Sign In
-            </Button>
-            /
-            <Button
-              component={Link}
-              to="/signUp"
-              variant="text"
-              style={{ color: Colors.Gray6 }}
-            >
-              Sign Up
-            </Button>
+            {user ? (
+              <>
+                <span>{user.email}</span>
+                <Button
+                  variant="text"
+                  style={{ color: Colors.Gray6 }}
+                  onClick={() => {
+                    const auth = getAuth(app);
+                    auth.signOut();
+                  }}
+                >
+                  Sign Out
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button
+                  component={Link}
+                  to="/signIn"
+                  variant="text"
+                  style={{ color: Colors.Gray6 }}
+                >
+                  Sign In
+                </Button>
+                /
+                <Button
+                  component={Link}
+                  to="/signUp"
+                  variant="text"
+                  style={{ color: Colors.Gray6 }}
+                >
+                  Sign Up
+                </Button>
+              </>
+            )}
           </div>
         </div>
       </section>

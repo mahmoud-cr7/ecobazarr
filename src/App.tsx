@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import "./App.css";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
@@ -7,6 +8,10 @@ import SignIn from "./pages/signIn/SignIn";
 import SignUp from "./pages/signUp/SignUp";
 import Categories from "./pages/catigories/Catigories";
 import Products from "./pages/products/Products";
+import { useState } from "react";
+
+function App() {
+  // const [errorMessage, setErrorMessage] = useState<string | null>(null);
 const router = createBrowserRouter([
   {
     path: "/",
@@ -18,11 +23,11 @@ const router = createBrowserRouter([
       },
       {
         path: "/signIn",
-        element: <SignIn />,
+        element: <SignIn signUp={false} />,
       },
       {
         path: "/signUp",
-        element: <SignUp />,
+        element: <SignUp signUp={false} />,
       },
       {
         path: "/categories",
@@ -30,12 +35,11 @@ const router = createBrowserRouter([
       },
       {
         path: "/products",
-        element:<Products/>,
-      }
+        element: <Products />,
+      },
     ],
   },
 ]);
-function App() {
   return <RouterProvider router={router} />;
 }
 

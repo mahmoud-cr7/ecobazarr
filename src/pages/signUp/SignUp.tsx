@@ -7,13 +7,19 @@ import { Checkbox, FormControlLabel } from "@mui/material";
 import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 // import "./SignUp.css";
-import"../signIn/SignIn.css";
+import "../signIn/SignIn.css";
+import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
+import { app } from "../../firebase/Firebase";
+import { useNavigate } from "react-router-dom";
+
 interface SignUpProps {
   // Define your props here
+  signUp: boolean;
 }
 
-const SignUp: React.FC<SignUpProps> = (props) => {
+const SignUp: React.FC<SignUpProps> = ({ signUp } = { signUp: false } ) => {
   const [showPassword, setShowPassword] = useState(false);
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -72,6 +78,20 @@ const SignUp: React.FC<SignUpProps> = (props) => {
 
     // If no errors, proceed with form submission
     console.log("Form submitted successfully!");
+    setErrors({});
+    const auth = getAuth(app);
+    createUserWithEmailAndPassword(auth, email, password)
+      .then((userCredential) => {
+        // Signed up
+        const user = userCredential.user;
+        // ...
+        navigate("/");
+      })
+      .catch((error) => {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        // ..
+      });
     // Add your form submission logic here
   };
 
