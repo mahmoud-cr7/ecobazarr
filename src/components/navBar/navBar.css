@@ -77,15 +77,15 @@
 }
 .mid .icons .shop-icon {
   position: relative;
+  cursor: pointer;
 }
 .mid .icons .shop-icon::after {
-  content: "9";
   position: absolute;
   top: -5px;
   right: -1px;
-  width: 2em;
-  height: 2em;
-  font-size: 0.9em;
+  width: 1.5em;
+  height: 1.5em;
+  font-size: 0.8em;
   background-color: #00b207;
   color: #fff;
   border-radius: 50%;
@@ -93,7 +93,18 @@
   justify-content: center;
   align-items: center;
   font-weight: bold;
-  cursor: pointer;
+}
+.cart-badge {
+  position: absolute;
+  text-align: center;
+  top: -8px;
+  right: -5px;
+  background-color: #00b207;
+  padding: 3px;
+  border-radius: 50%;
+  color: white;
+  width: 21px;
+  font-size: 11px;
 }
 .mid .icons .shop-icon:hover::after {
   transform: scale(1.2);

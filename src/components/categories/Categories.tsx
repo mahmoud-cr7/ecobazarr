@@ -1,57 +1,51 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-empty-object-type */
-import React from "react";
+import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
+import { getFirestore, collection, getDocs } from "firebase/firestore";
 import CategoryCard from "../category/CategoryCard";
 import "./Categories.css";
 import SyncIcon from "@mui/icons-material/Sync";
-import Snackbar, { SnackbarCloseReason } from "@mui/material/Snackbar";
+import Snackbar from "@mui/material/Snackbar";
 import Colors from "../../utils/Colors";
-import cat1 from "../../assets/cat1.jpeg";
-import cat2 from "../../assets/cat2.jpeg";
-import cat3 from "../../assets/cat3.jpeg";
-import cat4 from "../../assets/cat4.jpeg";
-import cat5 from "../../assets/cat5.jpeg";
-import cat6 from "../../assets/cat6.jpeg";
-import cat7 from "../../assets/cat7.jpeg";
-import cat8 from "../../assets/cat8.jpeg";
-import cat9 from "../../assets/cat9.jpeg";
-import cat10 from "../../assets/cat10.jpeg";
-import cat11 from "../../assets/cat11.jpeg";
 
-interface CategoriesProps {
-  // Define your props here
-}
-const images = [cat1, cat2, cat3, cat4, cat5, cat6, cat7, cat8, cat9, cat10, cat11];
 interface Category {
+  id: string;
   name: string;
   imageUrl?: string;
-  products?: {
-    image_url: string;
-  }[];
 }
-const fetchCategories = async () => {
-  const response = await axios.get(
-    "https://world.openfoodfacts.org/categories.json"
-  );
 
-  return response.data.tags
-    .filter((category: Category) => category.name)
-    .map((category: Category) => ({
-      name: category.name,
-      imageUrl: images[Math.floor(Math.random() * images.length)],
-    }));
+const fetchCategories = async (): Promise<Category[]> => {
+  const db = getFirestore();
+  const categoriesCollection = collection(db, "categories");
+  const querySnapshot = await getDocs(categoriesCollection);
+
+  return querySnapshot.docs.map((doc) => ({
+    id: doc.id,
+    ...doc.data(),
+  })) as Category[];
 };
-const Categories: React.FC<CategoriesProps> = () => {
+
+const Categories: React.FC = () => {
+  const [errorOpen, setErrorOpen] = useState(false);
+
   const {
     data: categories = [],
     isLoading,
     isError,
-  } = useQuery<Category[]>({
+  } = useQuery<Category[], Error>({
     queryKey: ["categories"],
     queryFn: fetchCategories,
+    // onError: () => setErrorOpen(true),
   });
+
+  const handleClose = (
+    _event?: React.SyntheticEvent | Event,
+    reason?: string
+  ) => {
+    if (reason === "clickaway") return;
+    setErrorOpen(false);
+  };
 
   if (isLoading)
     return (
@@ -63,23 +57,11 @@ const Categories: React.FC<CategoriesProps> = () => {
         />
       </div>
     );
-  if (isError)
-    return (
-      <div>
-        <Snackbar
-          open={isError}
-          autoHideDuration={6000}
-          message="An error occurred while fetching categories"
-          style={{ backgroundColor: Colors.Danger }}
-          className="snackbar"
-        />
-      </div>
-    );
 
   return (
-    <div className="catigories-container container">
-      <div className="catigories-cards">
-        {categories?.slice(0, 10).map((category: Category, index: number) => (
+    <div className="categories-container container">
+      <div className="categories-cards">
+        {categories?.slice(0, 10).map((category, index) => (
           <CategoryCard
             key={index}
             name={category.name}
@@ -87,6 +69,15 @@ const Categories: React.FC<CategoriesProps> = () => {
           />
         ))}
       </div>
+
+      <Snackbar
+        open={errorOpen}
+        autoHideDuration={6000}
+        onClose={handleClose}
+        message="An error occurred while fetching categories"
+        style={{ backgroundColor: Colors.Danger }}
+        className="snackbar"
+      />
     </div>
   );
 };

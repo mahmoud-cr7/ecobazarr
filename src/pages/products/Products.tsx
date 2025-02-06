@@ -1,36 +1,53 @@
 // App.tsx
 import React from "react";
 import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
+import { addDoc, collection, getDocs } from "firebase/firestore";
 import "../../components/products/products.css";
 import ProductCard from "../../components/productCard/ProductCard";
 import { Snackbar } from "@mui/material";
 import Colors from "../../utils/Colors";
 import SyncIcon from "@mui/icons-material/Sync";
+import { db } from "../../firebase/Firebase";
 
 interface Product {
-  product_name: string;
-  image_url: string;
+  id: string;
+  name: string;
+  imageUrl: string;
+  price: number;
+  onAddToCart?: (Product: Product) => void;
+  addedTocart?: boolean;
 }
 
-const fetchGroceries = async () => {
-  const response = await axios.get(
-    "https://world.openfoodfacts.org/cgi/search.pl?search_terms=milk&page_size=6&json=1"
-  );
-  return response.data.products
-    .filter((product: Product) => product.product_name && product.image_url)
-    .map((product: Product) => ({
-      product_name: product.product_name,
-      image_url: product.image_url,
-    }));
+const fetchProductsFromFirestore = async (): Promise<Product[]> => {
+  const querySnapshot = await getDocs(collection(db, "products"));
+  return querySnapshot.docs.map((doc) => ({
+    id: doc.id,
+    ...doc.data(),
+  })) as Product[];
 };
-
+const addToCart = async (product: Product) => {
+  try {
+    await addDoc(collection(db, "cart"), {
+      name: product.name,
+      imageUrl: product.imageUrl,
+      price: product.price,
+      quantity: 1,
+      addedToCart: product.addedTocart,
+    });
+    console.log("Product added to cart:", product.name);
+  } catch (error) {
+    console.error("Error adding to cart:", error);
+  }
+};
 const App: React.FC = () => {
   const {
     data: products,
     isLoading,
     isError,
-  } = useQuery<Product[]>({ queryKey: ["grocery"], queryFn: fetchGroceries });
+  } = useQuery<Product[]>({
+    queryKey: ["products"],
+    queryFn: fetchProductsFromFirestore,
+  });
 
   if (isLoading)
     return (
@@ -48,7 +65,7 @@ const App: React.FC = () => {
         <Snackbar
           open={isError}
           autoHideDuration={6000}
-          message="An error occurred while fetching categories"
+          message="An error occurred while fetching products"
           style={{ backgroundColor: Colors.Danger }}
           className="snackbar"
         />
@@ -58,11 +75,14 @@ const App: React.FC = () => {
   return (
     <div className="grocery-container container">
       <div className="grid">
-        {products?.slice(0, 10).map((product: Product, index: number) => (
+        {products?.map((product: Product) => (
           <ProductCard
-            key={index}
-            name={product.product_name}
-            imageUrl={product.image_url}
+            key={product.id}
+            name={product.name}
+            price={product.price}
+            imageUrl={product.imageUrl}
+            onAddToCart={() => addToCart(product)}
+            addedToCart={product.addedTocart}
           />
         ))}
       </div>

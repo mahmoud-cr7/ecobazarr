@@ -9,6 +9,7 @@ import SignUp from "./pages/signUp/SignUp";
 import Categories from "./pages/catigories/Catigories";
 import Products from "./pages/products/Products";
 import { useState } from "react";
+import Cart from "./pages/cart/Cart";
 
 function App() {
   // const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -37,6 +38,10 @@ const router = createBrowserRouter([
         path: "/products",
         element: <Products />,
       },
+      {
+        path: "/cart",
+        element: <Cart />,
+      }
     ],
   },
 ]);

@@ -13,16 +13,25 @@ import Colors from "../../utils/Colors";
 import { Link } from "react-router-dom";
 import TemporaryDrawer from "../drawer/Drawer";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
-import { app } from "../../firebase/Firebase";
+import { app, db } from "../../firebase/Firebase";
+import { collection, getDocs, Firestore, addDoc, doc, setDoc } from "firebase/firestore";
+
 interface NavBarProps {
   // Define your props here
 }
+const getCartCount = async (db: Firestore): Promise<number> => {
+  const cartCollection = collection(db, "cart");
+  const cartSnapshot = await getDocs(cartCollection);
+  return cartSnapshot.size; // Returns the number of documents
+};
 
 const NavBar: React.FC<NavBarProps> = (props) => {
   const [isShopOpen, setIsShopOpen] = useState(false);
   const [isPagesOpen, setIsPagesOpen] = useState(false);
   const [open, setOpen] = React.useState(false);
   const [user, setUser] = useState<{ email: string } | null>(null);
+  const [cartCount, setCartCount] = useState(0);
+  getCartCount(db).then((count) => setCartCount(count));
   useEffect(() => {
     const auth = getAuth(app);
 
@@ -119,24 +128,33 @@ const NavBar: React.FC<NavBarProps> = (props) => {
               Search
             </Button>
           </div>
-          <div
-            className="icons"
-            style={{
-              color: Colors.Gray6,
-              display: "flex",
-              alignItems: "center",
-            }}
-          >
-            <FavoriteBorderIcon className="icon" />|
-            <div
-              className="shop-icon"
-              onClick={() => {
-                setOpen(!open);
-              }}
-            >
-              <ShoppingBagIcon className="icon" />
-            </div>
-          </div>
+          {user ? (
+            <>
+              <div
+                className="icons"
+                style={{
+                  color: Colors.Gray6,
+                  display: "flex",
+                  alignItems: "center",
+                }}
+              >
+                <FavoriteBorderIcon className="icon" />|
+                <div
+                  className="shop-icon"
+                  onClick={() => {
+                    setOpen(!open);
+                  }}
+                >
+                  <ShoppingBagIcon className="icon" />
+                  {cartCount > 0 && (
+                    <span className="cart-badge">{cartCount}</span>
+                  )}
+                </div>
+              </div>
+            </>
+          ) : (
+            <></>
+          )}
         </div>
       </section>
       <section className="" style={{ backgroundColor: Colors.Gray8 }}>
@@ -206,3 +224,17 @@ const NavBar: React.FC<NavBarProps> = (props) => {
 };
 
 export default NavBar;
+
+
+
+// const uploadCategories = async () => {
+//   const categoriesCollection = collection(db, "categories");
+
+//   for (const category of categories) {
+//     await addDoc(categoriesCollection, category);
+//   }
+
+//   console.log("Categories added successfully!");
+// };
+
+// uploadCategories();
