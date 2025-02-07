@@ -16,6 +16,8 @@ interface Product {
   imageUrl: string;
   price: number;
   quantity: number;
+  addedToCart?: boolean;
+  categoryRef: string;
 }
 const fetchProductsFromFirestore = async (): Promise<Product[]> => {
   const querySnapshot = await getDocs(collection(db, "products"));
@@ -25,22 +27,9 @@ const fetchProductsFromFirestore = async (): Promise<Product[]> => {
   })) as Product[];
 };
 
-const addToCart = async (product: Product) => {
-  try {
-    await addDoc(collection(db, "cart"), {
-      name: product.name,
-      imageUrl: product.imageUrl,
-      price: product.price,
-      quantity: 1,
-    });
-    console.log("Product added to cart:", product.name);
-  } catch (error) {
-    console.error("Error adding to cart:", error);
-  }
-};
 
 const App: React.FC = () => {
-  const [addedToCart, setAddedToCart] = useState(false);
+  // const [addedToCart, setAddedToCart] = useState(false);
 
   const {
     data: products,
@@ -80,11 +69,14 @@ const App: React.FC = () => {
       <div className="grid">
         {products?.slice(0, 8).map((product: Product) => (
           <ProductCard
+            id={product.id}
             key={product.id}
             name={product.name}
             imageUrl={product.imageUrl}
             price={product.price}
-            onAddToCart={() => addToCart(product)}
+            addedToCart={product.addedToCart}
+            quantity={product.quantity}
+            categoryRef={product.categoryRef}
           />
         ))}
       </div>

@@ -8,6 +8,7 @@ interface ButtonProps {
   backgroundColor?: string;
   children: React.ReactNode;
   onClick?: React.MouseEventHandler<HTMLButtonElement>;
+  className?: string;
 }
 
 const ButtonShape: React.FC<ButtonProps> = ({
@@ -17,10 +18,11 @@ const ButtonShape: React.FC<ButtonProps> = ({
   backgroundColor,
   children,
   onClick,
+  className,
 }) => {
   return (
     <Button
-      className="button-shape"
+      className={`${className} button-shape`}
       sx={{
         width: width,
         height: height,

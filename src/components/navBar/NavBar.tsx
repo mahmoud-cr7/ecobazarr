@@ -10,12 +10,19 @@ import logoPng from "../../assets/logo.png";
 import "./NavBar.css";
 import { Button } from "@mui/material";
 import Colors from "../../utils/Colors";
-import { Link } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 import TemporaryDrawer from "../drawer/Drawer";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { app, db } from "../../firebase/Firebase";
-import { collection, getDocs, Firestore, addDoc, doc, setDoc } from "firebase/firestore";
-
+import {
+  collection,
+  getDocs,
+  Firestore,
+  addDoc,
+  doc,
+  setDoc,
+} from "firebase/firestore";
+import { useNavigate } from "react-router-dom";
 interface NavBarProps {
   // Define your props here
 }
@@ -24,13 +31,14 @@ const getCartCount = async (db: Firestore): Promise<number> => {
   const cartSnapshot = await getDocs(cartCollection);
   return cartSnapshot.size; // Returns the number of documents
 };
-
 const NavBar: React.FC<NavBarProps> = (props) => {
   const [isShopOpen, setIsShopOpen] = useState(false);
   const [isPagesOpen, setIsPagesOpen] = useState(false);
   const [open, setOpen] = React.useState(false);
   const [user, setUser] = useState<{ email: string } | null>(null);
   const [cartCount, setCartCount] = useState(0);
+  const navigate = useNavigate();
+
   getCartCount(db).then((count) => setCartCount(count));
   useEffect(() => {
     const auth = getAuth(app);
@@ -214,8 +222,26 @@ const NavBar: React.FC<NavBarProps> = (props) => {
             )}
           </div>
           <Button className="button">Blog</Button>
-          <Button className="button">About Us</Button>
-          <Button className="button">Contact Us</Button>
+          <Button
+            className="button"
+            onClick={() => {
+              navigate("/aboutUs");
+              setIsPagesOpen(false);
+              setIsShopOpen(false);
+            }}
+          >
+            About Us
+          </Button>
+          <Button
+            className="button"
+            onClick={() => {
+              navigate("/contactUs");
+              setIsPagesOpen(false);
+              setIsShopOpen(false);
+            }}
+          >
+            Contact Us
+          </Button>
         </div>
       </section>
       <TemporaryDrawer open={open} setOpen={setOpen} />
@@ -224,8 +250,6 @@ const NavBar: React.FC<NavBarProps> = (props) => {
 };
 
 export default NavBar;
-
-
 
 // const uploadCategories = async () => {
 //   const categoriesCollection = collection(db, "categories");

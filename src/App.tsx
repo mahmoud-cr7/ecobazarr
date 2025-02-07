@@ -10,6 +10,8 @@ import Categories from "./pages/catigories/Catigories";
 import Products from "./pages/products/Products";
 import { useState } from "react";
 import Cart from "./pages/cart/Cart";
+import AboutUs from "./pages/aboutUs/AboutUs";
+import ContactUS from "./pages/contactUs/ContactUS";
 
 function App() {
   // const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -41,7 +43,15 @@ const router = createBrowserRouter([
       {
         path: "/cart",
         element: <Cart />,
-      }
+      },
+      {
+        path: "/aboutUs",
+        element: <AboutUs />,
+      },{
+        path: "/contactUs",
+        element: <ContactUS />,
+      },
+
     ],
   },
 ]);

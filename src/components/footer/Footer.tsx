@@ -123,7 +123,7 @@ const Footer: React.FC<FooterProps> = (props) => {
             ))}
           </div>
         </section>
-                <section className="container bottom-footer">
+        <section className="container bottom-footer">
           <div>
             <p style={{ color: Colors.Gray5 }}>
               © 2023 ECOBAZAR. All Rights Reserved
