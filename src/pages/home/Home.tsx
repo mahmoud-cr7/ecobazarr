@@ -26,8 +26,10 @@ import Stack from "@mui/material/Stack";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import StarIcon from "@mui/icons-material/Star";
 import user from "../../assets/user.png";
+import Newsletter from "../../components/newsletter/Newsletter";
 interface HomeProps {
   // Define your props here
+  newsletterOpen: boolean;
 }
 const shippingServices = {
   FreeShipping: {
@@ -52,7 +54,7 @@ const shippingServices = {
   },
 };
 
-const Home: React.FC<HomeProps> = (props) => {
+const Home: React.FC<HomeProps> = ({ newsletterOpen } = { newsletterOpen: false } ) => {
   const [timeLeft, setTimeLeft] = useState(20 * 24 * 60 * 60); // 20 days in seconds
   useEffect(() => {
     if (timeLeft === 0) return; // Stop the timer when it reaches 0
@@ -468,7 +470,10 @@ const Home: React.FC<HomeProps> = (props) => {
               onChange={handleChange}
               renderItem={(item) => (
                 <PaginationItem
-                  components={{ previous: () => ArrowBack, next: () => ArrowForward }}
+                  components={{
+                    previous: () => ArrowBack,
+                    next: () => ArrowForward,
+                  }}
                   {...item}
                 />
               )}
@@ -476,6 +481,7 @@ const Home: React.FC<HomeProps> = (props) => {
           </Stack>
         </div>
       </div>
+      <Newsletter newsletterOpen={newsletterOpen}  />
     </>
   );
 };

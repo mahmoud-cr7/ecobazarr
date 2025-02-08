@@ -14,22 +14,23 @@ import {
   getDocs,
   updateDoc,
 } from "firebase/firestore";
-import { db } from "../../firebase/Firebase";
+import { app, db } from "../../firebase/Firebase";
 import { styled } from "@mui/material/styles";
 import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
-import DialogActions from "@mui/material/DialogActions";
 import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
-import Typography from "@mui/material/Typography";
-import { Button } from "@mui/material";
 import FacebookIcon from "@mui/icons-material/Facebook";
 import InstagramIcon from "@mui/icons-material/Instagram";
 import XIcon from "@mui/icons-material/X";
 import PinterestIcon from "@mui/icons-material/Pinterest";
 import ButtonShape from "../button/Button";
 import RemoveShoppingCartIcon from "@mui/icons-material/RemoveShoppingCart";
+import logo from "../../assets/logo.png";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { Snackbar } from "@mui/material";
+
 
 interface Product {
   id: string;
@@ -48,6 +49,8 @@ interface GroceryCardProps {
   addedToCart?: boolean;
   quantity: number;
   categoryRef: string;
+  onIncrease: () => void;
+  onDecrease: () => void;
 }
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   "& .MuiDialogContent-root": {
@@ -70,7 +73,10 @@ const ProductCard: React.FC<GroceryCardProps> = ({
   const [isFavorite, setIsFavorite] = useState(false);
   const [isInCart, setIsInCart] = useState(initialAddedToCart || false);
   const [openDialog, setOpenDialog] = useState(false);
-
+  const [sideBarImg , setSideBarImg] = useState([imageUrl]);
+  const [user, setUser] = useState<{ email: string } | null>(null);
+  const [notAuthorized, setNotAuthorized] = useState(false);
+  const [quantities, setQuantities] = useState(1);
   const handleClickOpen = () => {
     setOpenDialog(true);
   };
@@ -82,7 +88,12 @@ const ProductCard: React.FC<GroceryCardProps> = ({
   }, [initialAddedToCart]);
 
   const toggleFavorite = () => {
-    setIsFavorite((prev) => !prev);
+    if(user){
+      setIsFavorite(!isFavorite);
+
+    }else{
+      setNotAuthorized(true);
+    }
   };
 
   const updateProductCartStatus = async (status: boolean) => {
@@ -95,39 +106,84 @@ const ProductCard: React.FC<GroceryCardProps> = ({
   };
 
   const addToCart = async () => {
-    if (isInCart) {
-      try {
-        const cartQuery = await getDocs(collection(db, "cart"));
-        const cartItem = cartQuery.docs.find((doc) => doc.data().name === name);
-        if (cartItem) {
-          await deleteDoc(doc(db, "cart", cartItem.id));
-        }
-        console.log("Product removed from cart:", name);
-        setIsInCart(false);
-        updateProductCartStatus(false);
-      } catch (error) {
-        console.error("Error removing from cart:", error);
-      }
-    } else {
-      try {
-        await addDoc(collection(db, "cart"), {
-          name,
-          imageUrl,
-          price,
-          quantity: 1,
-        });
-        console.log("Product added to cart:", name);
-        setIsInCart(true);
-        updateProductCartStatus(true);
-      } catch (error) {
-        console.error("Error adding to cart:", error);
-      }
+    if(user){
+          if (isInCart) {
+            try {
+              const cartQuery = await getDocs(collection(db, "cart"));
+              const cartItem = cartQuery.docs.find(
+                (doc) => doc.data().name === name
+              );
+              if (cartItem) {
+                await deleteDoc(doc(db, "cart", cartItem.id));
+              }
+              console.log("Product removed from cart:", name);
+              setIsInCart(false);
+              updateProductCartStatus(false);
+            } catch (error) {
+              console.error("Error removing from cart:", error);
+            }
+          } else {
+            try {
+              await addDoc(collection(db, "cart"), {
+                name,
+                imageUrl,
+                price,
+                quantity: quantities,
+              });
+              console.log("Product added to cart:", name);
+              setIsInCart(true);
+              updateProductCartStatus(true);
+            } catch (error) {
+              console.error("Error adding to cart:", error);
+            }
+          }
+    } else{
+      setNotAuthorized(true);
     }
   };
+  useEffect(() => {
+    const auth = getAuth(app);
 
+    // Listen for authentication state changes
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        // User is signed in
+        setUser({ email: user.email || "" });
+      } else {
+        // User is signed out
+        setUser(null);
+      }
+    });
+
+    // Cleanup subscription on unmount
+    return () => unsubscribe();
+  }, []);
+  const increaseQuantity = () => {
+    setQuantities((prev) => prev + 1);
+  };
+
+  const decreaseQuantity = () => {
+    if (quantities > 1) {
+      setQuantities((prev) => prev - 1);
+    }
+  };
   return (
     <>
-      <div className="product-card" onClick={handleClickOpen}>
+      <Snackbar
+        anchorOrigin={{ vertical: "top", horizontal: "center" }} // Position at the top center
+        open={notAuthorized}
+        onClose={() => setNotAuthorized(false)}
+        message="You are not authorized to perform this action"
+        sx={{
+          "& .MuiSnackbarContent-root": {
+            fontSize: "1.2rem",
+            padding: "20px",
+            minWidth: "400px",
+            backgroundColor: Colors.Danger,
+          },
+        }}
+      />
+      <div className="product-card">
         <img src={imageUrl} alt={name} className="image" />
         <div className="favorite-icon" onClick={toggleFavorite}>
           {isFavorite ? (
@@ -139,7 +195,11 @@ const ProductCard: React.FC<GroceryCardProps> = ({
             <FavoriteBorderIcon className="favorite" />
           )}
         </div>
-        <h3 className="name" style={{ color: Colors.Gray7 }}>
+        <h3
+          className="name"
+          style={{ color: Colors.Gray7 }}
+          onClick={handleClickOpen}
+        >
           {name.length > 20 ? name.slice(0, 20) + "..." : name}
         </h3>
         <div className="price">
@@ -185,22 +245,23 @@ const ProductCard: React.FC<GroceryCardProps> = ({
         <DialogContent dividers>
           <div className="product-details">
             <div className="product-main">
-              <div>
-                <img src={imageUrl} alt={name} className="image" />
+              <div className="product-images">
+                <img src={sideBarImg[0]} alt={name} className="image" />
                 <div className="image-sidebar">
-                  {[imageUrl, imageUrl, imageUrl, imageUrl, imageUrl].map(
+                  {[imageUrl, logo, imageUrl, imageUrl, imageUrl].map(
                     (img, index) => (
                       <img
                         key={index}
                         src={img}
                         alt={`product-${index}`}
                         className="sidebar-image"
+                        onClick={() => setSideBarImg([img])}
                       />
                     )
                   )}
                 </div>
               </div>
-              <div>
+              <div className="product-info">
                 <h1 className="name">
                   {name} <span className="stock">In Stock</span>
                 </h1>
@@ -257,9 +318,13 @@ const ProductCard: React.FC<GroceryCardProps> = ({
                 </p>
                 <div className="quantity">
                   <div className="quantity-selector">
-                    <span className="minus">-</span>
-                    <span>{quantity}</span>
-                    <span className="plus">+</span>
+                    <span className="minus" onClick={decreaseQuantity}>
+                      -
+                    </span>
+                    <span>{quantities}</span>
+                    <span className="plus" onClick={increaseQuantity}>
+                      +
+                    </span>
                   </div>
                   {isInCart ? (
                     <ButtonShape

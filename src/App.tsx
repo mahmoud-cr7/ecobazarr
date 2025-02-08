@@ -14,47 +14,50 @@ import AboutUs from "./pages/aboutUs/AboutUs";
 import ContactUS from "./pages/contactUs/ContactUS";
 
 function App() {
-  // const [errorMessage, setErrorMessage] = useState<string | null>(null);
-const router = createBrowserRouter([
-  {
-    path: "/",
-    element: <Layout />,
-    children: [
-      {
-        path: "/",
-        element: <Home />,
-      },
-      {
-        path: "/signIn",
-        element: <SignIn signUp={false} />,
-      },
-      {
-        path: "/signUp",
-        element: <SignUp signUp={false} />,
-      },
-      {
-        path: "/categories",
-        element: <Categories />,
-      },
-      {
-        path: "/products",
-        element: <Products />,
-      },
-      {
-        path: "/cart",
-        element: <Cart />,
-      },
-      {
-        path: "/aboutUs",
-        element: <AboutUs />,
-      },{
-        path: "/contactUs",
-        element: <ContactUS />,
-      },
-
-    ],
-  },
-]);
+  const [newsletterOpen, setNewsletterOpen] = useState(false);
+  useState(() => {
+    setNewsletterOpen(true);
+  }, );
+  const router = createBrowserRouter([
+    {
+      path: "/",
+      element: <Layout />,
+      children: [
+        {
+          path: "/",
+          element: <Home newsletterOpen={newsletterOpen} />,
+        },
+        {
+          path: "/signIn",
+          element: <SignIn signUp={false} />,
+        },
+        {
+          path: "/signUp",
+          element: <SignUp signUp={false} />,
+        },
+        {
+          path: "/categories",
+          element: <Categories />,
+        },
+        {
+          path: "/products",
+          element: <Products />,
+        },
+        {
+          path: "/cart",
+          element: <Cart />,
+        },
+        {
+          path: "/aboutUs",
+          element: <AboutUs />,
+        },
+        {
+          path: "/contactUs",
+          element: <ContactUS />,
+        },
+      ],
+    },
+  ]);
   return <RouterProvider router={router} />;
 }
 

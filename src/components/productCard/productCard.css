@@ -44,6 +44,7 @@
   font-weight: bold;
   margin: 0;
   padding-block: 10px;
+  cursor: pointer;
 }
 .product-card .price {
   display: flex;
@@ -74,10 +75,16 @@
   gap: 20px;
   padding: 20px;
 }
-.product-main{
+.product-main {
   display: flex;
   gap: 20px;
   justify-content: center;
+}
+.product-images {
+  flex: 0.3;
+}
+.product-info {
+  flex: 0.7;
 }
 
 .product-details .image {
@@ -204,15 +211,21 @@
   gap: 10px;
   font-size: 16px;
 }
-.image-sidebar{
-  width: 100px;
+.image-sidebar {
+  margin-block: 10px;
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   gap: 10px;
 }
-.image-sidebar .sidebar-image{
+.image-sidebar .sidebar-image {
   width: 50px;
   height: 50px;
   object-fit: cover;
   border-radius: 8px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+.image-sidebar .sidebar-image:hover {
+  transform: scale(1.1);
+  border: 1px solid #84d187;
 }
