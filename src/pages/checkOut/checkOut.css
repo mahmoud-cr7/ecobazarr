@@ -1,0 +1,258 @@
+.checkout {
+  display: flex;
+  justify-content: space-between;
+  align-items: start;
+  gap: 30px;
+}
+.billing-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: start;
+  gap: 20px;
+  flex-direction: column;
+  margin-bottom: 20px;
+  width: 100%;
+  flex: 0.7;
+}
+
+.billing-info h1 {
+  font-size: 1.5rem;
+  font-weight: 500;
+  margin-bottom: 10px;
+}
+.billing-info .identity {
+  display: flex;
+  justify-content: space-between;
+  align-items: start;
+  gap: 20px;
+  flex-direction: row;
+  width: 100%;
+}
+.billing-info .identity .input-div {
+  display: flex;
+  justify-content: space-between;
+  align-items: start;
+  gap: 2px;
+  flex-direction: column;
+  width: 100%;
+  flex-wrap: wrap;
+}
+.billing-info label {
+  font-size: 1rem;
+  font-weight: 300;
+  margin-bottom: 5px;
+}
+.billing-info .identity input {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  margin-bottom: 10px;
+  transition: all 0.3s;
+  width: 100%;
+}
+.billing-info .identity input:focus {
+  outline: none;
+  border: 1px solid #2a7f31;
+}
+.billing-info .address {
+  display: flex;
+  justify-content: space-between;
+  align-items: start;
+  gap: 2px;
+  flex-direction: column;
+  width: 100%;
+}
+.billing-info .address label {
+  font-size: 1rem;
+  font-weight: 300;
+  margin-bottom: 5px;
+}
+.billing-info .address input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  margin-bottom: 10px;
+  transition: all 0.3s;
+}
+.billing-info .address input:focus {
+  outline: none;
+  border: 1px solid #2a7f31;
+}
+
+.billing-info .city {
+  display: flex;
+  justify-content: space-between;
+  align-items: start;
+  gap: 15px;
+  width: 100%;
+}
+.billing-info .city label {
+  font-size: 1rem;
+  font-weight: 300;
+  margin-bottom: 5px;
+}
+.billing-info .city input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  margin-bottom: 10px;
+  transition: all 0.3s;
+}
+.billing-info .city select {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  margin-bottom: 10px;
+  transition: all 0.3s;
+}
+.billing-info .city input:focus,
+.billing-info .city select:focus {
+  outline: none;
+  border: 1px solid #2a7f31;
+}
+.billing-info .city .input-div {
+  display: flex;
+  justify-content: space-between;
+  align-items: start;
+  gap: 2px;
+  flex-direction: column;
+  width: 100%;
+  flex-wrap: wrap;
+}
+.billing-info .contact {
+  display: flex;
+  justify-content: space-between;
+  align-items: start;
+  gap: 20px;
+  width: 100%;
+}
+.billing-info .contact label {
+  font-size: 1rem;
+  font-weight: 300;
+  margin-bottom: 5px;
+}
+.billing-info .contact input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  margin-bottom: 10px;
+  transition: all 0.3s;
+}
+.billing-info .contact input:focus {
+  outline: none;
+  border: 1px solid #2a7f31;
+}
+.billing-info .contact .input-div {
+  display: flex;
+  justify-content: space-between;
+  align-items: start;
+  gap: 2px;
+  flex-direction: column;
+  width: 100%;
+  flex-wrap: wrap;
+}
+.billing-info .different-address {
+  padding-bottom: 10px;
+  width: 100%;
+  border-bottom: 1px solid #ccc;
+}
+.billing-info .order-notes {
+  width: 100%;
+}
+.billing-info .order-notes h1 {
+  font-size: 1.5rem;
+  font-weight: 500;
+  margin-bottom: 10px;
+}
+.billing-info .order-notes textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  margin-bottom: 10px;
+  margin-top: 10px;
+  transition: all 0.3s;
+  resize: none;
+}
+.billing-info .order-notes textarea:focus {
+  outline: none;
+  border: 1px solid #2a7f31;
+}
+.order-summary {
+  flex: 0.4;
+  width: 100%;
+  padding: 15px;
+  border: 1px solid #ccc;
+  border-radius: 15px;
+}
+.order-summary h1 {
+  font-size: 1.5rem;
+  font-weight: 500;
+  margin-bottom: 10px;
+}
+.subtotal,
+.shipping,
+.total {
+  display: flex;
+  justify-content: space-between;
+  align-items: start;
+  gap: 20px;
+  margin-bottom: 10px;
+}
+.total-price{
+  font-size: 1.5rem;
+  font-weight: 500;
+}
+.shipping {
+  padding-block: 20px;
+  border-block: 1px solid #ccc;
+}
+.method h1 {
+  font-size: 1.5rem;
+  font-weight: 500;
+  margin-bottom: 10px;
+}
+/* .method .payment-label{
+  font-size: 1rem;
+  font-weight: 500;
+  margin-block: 25px;
+  gap: 10px;
+} */
+/* styles.css */
+.payment-label {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px; 
+  cursor: pointer;
+}
+
+.payment-label input[type="radio"] {
+  appearance: none; /* Remove default styling */
+  width: 20px;
+  height: 20px;
+  border: 2px solid #ccc; /* Default border color */
+  border-radius: 50%; /* Make it circular */
+  margin-right: 10px; /* Add margin between radio button and label */
+  cursor: pointer;
+  position: relative;
+}
+
+.payment-label input[type="radio"]:checked {
+  border-color: #00B207; /* Change border color when selected */
+}
+
+.payment-label input[type="radio"]:checked::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 8px;
+  height: 8px;
+  background-color: #00B207; /* Inner circle color */
+  border-radius: 50%;
+}

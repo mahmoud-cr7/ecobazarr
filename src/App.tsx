@@ -12,6 +12,7 @@ import { useState } from "react";
 import Cart from "./pages/cart/Cart";
 import AboutUs from "./pages/aboutUs/AboutUs";
 import ContactUS from "./pages/contactUs/ContactUS";
+import CheckOut from "./pages/checkOut/CheckOut";
 
 function App() {
   const [newsletterOpen, setNewsletterOpen] = useState(false);
@@ -55,6 +56,14 @@ function App() {
           path: "/contactUs",
           element: <ContactUS />,
         },
+        {
+          path: "/checkOut",
+          element: <CheckOut/>,
+        },
+        {
+          path: "*",
+          element: <h1>404</h1>,
+        }
       ],
     },
   ]);

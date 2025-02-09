@@ -131,7 +131,7 @@ export default function TemporaryDrawer({
   };
 
   const handleCheckout = () => {
-    navigate("/cart");
+    navigate("/checkOut");
     setOpen(false);
   };
 
