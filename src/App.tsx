@@ -13,12 +13,13 @@ import Cart from "./pages/cart/Cart";
 import AboutUs from "./pages/aboutUs/AboutUs";
 import ContactUS from "./pages/contactUs/ContactUS";
 import CheckOut from "./pages/checkOut/CheckOut";
+import Illustration from "./pages/Illustration/Illustration";
 
 function App() {
   const [newsletterOpen, setNewsletterOpen] = useState(false);
   useState(() => {
     setNewsletterOpen(true);
-  }, );
+  });
   const router = createBrowserRouter([
     {
       path: "/",
@@ -58,12 +59,12 @@ function App() {
         },
         {
           path: "/checkOut",
-          element: <CheckOut/>,
+          element: <CheckOut />,
         },
         {
           path: "*",
-          element: <h1>404</h1>,
-        }
+          element: <Illustration />,
+        },
       ],
     },
   ]);

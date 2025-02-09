@@ -1,0 +1,17 @@
+.illustration {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+.illustration h1 {
+  font-size: 2.5rem;
+  font-weight: bold;
+  text-align: center;
+}
+.illustration p {
+  font-size: 1rem;
+  text-align: center;
+  width: 600px;
+  padding-block: 1rem;
+}

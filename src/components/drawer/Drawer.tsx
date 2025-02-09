@@ -135,6 +135,11 @@ export default function TemporaryDrawer({
     setOpen(false);
   };
 
+  const handleGoToCart = () => {
+    navigate("/cart");
+    setOpen(false);
+  }
+
   const DrawerList = (
     <Box sx={{ width: 350 }} role="presentation">
       <h1 className="menu-title">Cart</h1>
@@ -176,7 +181,7 @@ export default function TemporaryDrawer({
         <ButtonShape
           height="50px"
           width="100%"
-          onClick={handleCheckout}
+          onClick={handleGoToCart}
           textColor={Colors.White}
           backgroundColor={Colors.Primary}
         >
