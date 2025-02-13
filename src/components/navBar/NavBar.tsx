@@ -23,6 +23,7 @@ import {
   setDoc,
 } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
+import Wishlist from "../wishListDrawer/WishListDrawer";
 interface NavBarProps {
   // Define your props here
 }
@@ -31,15 +32,24 @@ const getCartCount = async (db: Firestore): Promise<number> => {
   const cartSnapshot = await getDocs(cartCollection);
   return cartSnapshot.size; // Returns the number of documents
 };
+const getWishListCount = async (db: Firestore): Promise<number> => {
+  const wishListCollection = collection(db, "Wishlist");
+  const wishListSnapshot = await getDocs(wishListCollection);
+  return wishListSnapshot.size; // Returns the number of documents
+}
 const NavBar: React.FC<NavBarProps> = (props) => {
   const [isShopOpen, setIsShopOpen] = useState(false);
   const [isPagesOpen, setIsPagesOpen] = useState(false);
   const [open, setOpen] = React.useState(false);
+  const [faVOpen, setFavOpen] = React.useState(false);
   const [user, setUser] = useState<{ email: string } | null>(null);
   const [cartCount, setCartCount] = useState(0);
+  const [wishListCount, setWishListCount] = useState(0);
   const navigate = useNavigate();
 
   getCartCount(db).then((count) => setCartCount(count));
+  getWishListCount(db).then((count) => setWishListCount(count));
+  
   useEffect(() => {
     const auth = getAuth(app);
 
@@ -146,7 +156,18 @@ const NavBar: React.FC<NavBarProps> = (props) => {
                   alignItems: "center",
                 }}
               >
-                <FavoriteBorderIcon className="icon" />|
+                <div
+                  className="shop-icon"
+                  onClick={() => {
+                    setFavOpen(!faVOpen);
+                  }}
+                >
+                  <FavoriteBorderIcon className="icon" />
+                  {wishListCount > 0 && (
+                    <span className="cart-badge">{wishListCount}</span>
+                  )}
+                </div>
+                |
                 <div
                   className="shop-icon"
                   onClick={() => {
@@ -245,6 +266,7 @@ const NavBar: React.FC<NavBarProps> = (props) => {
         </div>
       </section>
       <TemporaryDrawer open={open} setOpen={setOpen} />
+      <Wishlist faVOpen={faVOpen} setFavOpen={setFavOpen} />
     </div>
   );
 };

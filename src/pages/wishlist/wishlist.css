@@ -1,0 +1,122 @@
+.wishlist {
+  width: 100%;
+  text-align: center;
+}
+.wishlist .title {
+  font-size: 2rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+.wishlist .wishlist-table {
+  width: 100%;
+  margin-bottom: 2rem;
+  border: 1px solid #ccc;
+  /* padding-inline: 10px; */
+  border-radius: 10px;
+}
+.wishlist .wishlist-table table {
+  width: 100%;
+}
+.wishlist .wishlist-table table td {
+  padding: 20px;
+  border-bottom: 1px solid #ccc;
+  text-align: start;
+}
+.wishlist .wishlist-table table tr {
+  border-bottom: 1px solid #ccc;
+}
+.table-header {
+  padding: 10px;
+  border-radius: 10px;
+  margin-block: 1rem;
+  border-bottom: 1px solid #ccc;
+}
+.table-header .cell {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #333;
+  text-align: start;
+  padding: 16px;
+}
+.actions {
+  /* display: flex; */
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  /* margin-block: 40px; */
+}
+.remove-button {
+  cursor: pointer;
+  color: #333;
+  font-size: 20px;
+  background-color: #e7e7e7;
+  border: 1px solid #ddd;
+  padding: 7px;
+  border-radius: 50%;
+  width: 34px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.share {
+  display: flex;
+  justify-content: start;
+  align-items: start;
+  gap: 1rem;
+  margin-block: 40px;
+  padding-inline: 10px;
+}
+.share p {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #333;
+  text-align: start;
+}
+.share .icon {
+  transition: 0.3s;
+}
+.share .icon:hover {
+  color: #00b207 !important;
+  transform: scale(1.2);
+}
+.in-stock {
+  background-color: #a4cea5;
+  color: #00b207;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+  font-weight: 500;
+  margin-left: 10px;
+  padding: 5px 10px;
+  border-radius: 5px;
+  width: 104px;
+  height: 30px !important;
+  line-height: 30px;
+  text-align: center;
+  margin-block: 26px;
+  border-bottom: 1px solid #ccc;
+}
+.out-of-stock {
+  background-color: #f0a8a8;
+  color: #ea4b48;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+  font-weight: 500;
+  margin-left: 10px;
+  padding: 5px 10px;
+  border-radius: 5px;
+  width: 134px;
+  height: 30px !important;
+  line-height: 30px;
+  text-align: center;
+  margin-block: 26px;
+  border-bottom: 1px solid #ccc;
+}
+.disabled{
+    pointer-events: none;
+    opacity: 0.5;
+}

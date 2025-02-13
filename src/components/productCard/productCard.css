@@ -59,6 +59,8 @@
 .product-card .price .cart {
   cursor: pointer;
   transition: 0.3s;
+  width: 56px;
+  height: 56px;
 }
 .product-card .price .cart:hover {
   color: #00b207 !important;

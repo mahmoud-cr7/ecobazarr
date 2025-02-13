@@ -11,7 +11,9 @@ import {
   collection,
   deleteDoc,
   doc,
+  getDoc,
   getDocs,
+  getFirestore,
   updateDoc,
 } from "firebase/firestore";
 import { app, db } from "../../firebase/Firebase";
@@ -31,7 +33,6 @@ import logo from "../../assets/logo.png";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { Snackbar } from "@mui/material";
 
-
 interface Product {
   id: string;
   name: string;
@@ -47,6 +48,7 @@ interface GroceryCardProps {
   imageUrl: string;
   price: number;
   addedToCart?: boolean;
+  addedToWishlist?: boolean;
   quantity: number;
   categoryRef: string;
   onIncrease: () => void;
@@ -69,14 +71,19 @@ const ProductCard: React.FC<GroceryCardProps> = ({
   addedToCart: initialAddedToCart,
   quantity,
   categoryRef,
+  addedToWishlist: initialAddedToWishlist,
 }) => {
   const [isFavorite, setIsFavorite] = useState(false);
   const [isInCart, setIsInCart] = useState(initialAddedToCart || false);
   const [openDialog, setOpenDialog] = useState(false);
-  const [sideBarImg , setSideBarImg] = useState([imageUrl]);
+  const [sideBarImg, setSideBarImg] = useState([imageUrl]);
   const [user, setUser] = useState<{ email: string } | null>(null);
   const [notAuthorized, setNotAuthorized] = useState(false);
   const [quantities, setQuantities] = useState(1);
+  const [isInWishlist, setIsInWishlist] = useState(
+    initialAddedToWishlist || false
+  );
+
   const handleClickOpen = () => {
     setOpenDialog(true);
   };
@@ -87,11 +94,26 @@ const ProductCard: React.FC<GroceryCardProps> = ({
     setIsInCart(initialAddedToCart || false);
   }, [initialAddedToCart]);
 
-  const toggleFavorite = () => {
-    if(user){
-      setIsFavorite(!isFavorite);
+  useEffect(() => {
+    const fetchProductData = async () => {
+      try {
+        const productRef = doc(db, "products", id);
+        const productSnap = await getDoc(productRef);
+        if (productSnap.exists()) {
+          const productData = productSnap.data();
+          setIsInWishlist(productData.addedToWishlist || false);
+        }
+      } catch (error) {
+        console.error("Error fetching product data:", error);
+      }
+    };
 
-    }else{
+    fetchProductData();
+  }, [id]);
+  const toggleFavorite = () => {
+    if (user) {
+      setIsFavorite(!isFavorite);
+    } else {
       setNotAuthorized(true);
     }
   };
@@ -105,39 +127,90 @@ const ProductCard: React.FC<GroceryCardProps> = ({
     }
   };
 
+  const updateProductWishlistStatus = async (status: boolean) => {
+    try {
+      const productRef = doc(db, "products", id);
+      await updateDoc(productRef, { addedToWishlist: status });
+    } catch (error) {
+      console.error("Error updating product wishlist status:", error);
+    }
+  };
+
   const addToCart = async () => {
-    if(user){
-          if (isInCart) {
-            try {
-              const cartQuery = await getDocs(collection(db, "cart"));
-              const cartItem = cartQuery.docs.find(
-                (doc) => doc.data().name === name
-              );
-              if (cartItem) {
-                await deleteDoc(doc(db, "cart", cartItem.id));
-              }
-              console.log("Product removed from cart:", name);
-              setIsInCart(false);
-              updateProductCartStatus(false);
-            } catch (error) {
-              console.error("Error removing from cart:", error);
-            }
-          } else {
-            try {
-              await addDoc(collection(db, "cart"), {
-                name,
-                imageUrl,
-                price,
-                quantity: quantities,
-              });
-              console.log("Product added to cart:", name);
-              setIsInCart(true);
-              updateProductCartStatus(true);
-            } catch (error) {
-              console.error("Error adding to cart:", error);
-            }
+    if (user) {
+      if (isInCart) {
+        try {
+          const cartQuery = await getDocs(collection(db, "cart"));
+          const cartItem = cartQuery.docs.find(
+            (doc) => doc.data().name === name
+          );
+          if (cartItem) {
+            await deleteDoc(doc(db, "cart", cartItem.id));
           }
-    } else{
+          console.log("Product removed from cart:", name);
+          setIsInCart(false);
+          updateProductCartStatus(false);
+        } catch (error) {
+          console.error("Error removing from cart:", error);
+        }
+      } else {
+        try {
+          await addDoc(collection(db, "cart"), {
+            name,
+            imageUrl,
+            price,
+            quantity: quantities,
+          });
+          console.log("Product added to cart:", name);
+          setIsInCart(true);
+          updateProductCartStatus(true);
+        } catch (error) {
+          console.error("Error adding to cart:", error);
+        }
+      }
+    } else {
+      setNotAuthorized(true);
+    }
+  };
+  const addToWishlist = async () => {
+    if (user) {
+      if (isInWishlist) {
+        try {
+          // Query the wishlist collection to find the item by name
+          const wishlistQuery = await getDocs(collection(db, "Wishlist"));
+          const wishlistItem = wishlistQuery.docs.find(
+            (doc) => doc.data().name === name
+          );
+
+          // If the product is in the wishlist, remove it
+          if (wishlistItem) {
+            await deleteDoc(doc(db, "Wishlist", wishlistItem.id));
+          }
+
+          console.log("Product removed from wishlist:", name);
+          setIsInWishlist(false);
+          updateProductWishlistStatus(false);
+        } catch (error) {
+          console.error("Error removing from wishlist:", error);
+        }
+      } else {
+        try {
+          // Add the product to the wishlist
+          await addDoc(collection(db, "Wishlist"), {
+            name,
+            imageUrl,
+            price,
+            quantity,
+          });
+
+          console.log("Product added to wishlist:", name);
+          setIsInWishlist(true);
+          updateProductWishlistStatus(true);
+        } catch (error) {
+          console.error("Error adding to wishlist:", error);
+        }
+      }
+    } else {
       setNotAuthorized(true);
     }
   };
@@ -170,7 +243,7 @@ const ProductCard: React.FC<GroceryCardProps> = ({
   return (
     <>
       <Snackbar
-        anchorOrigin={{ vertical: "top", horizontal: "center" }} // Position at the top center
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
         open={notAuthorized}
         onClose={() => setNotAuthorized(false)}
         message="You are not authorized to perform this action"
@@ -185,14 +258,19 @@ const ProductCard: React.FC<GroceryCardProps> = ({
       />
       <div className="product-card">
         <img src={imageUrl} alt={name} className="image" />
-        <div className="favorite-icon" onClick={toggleFavorite}>
-          {isFavorite ? (
+        <div className="favorite-icon">
+          {isInWishlist ? (
             <FavoriteIcon
               className="favorite"
               style={{ color: Colors.Primary }}
+              onClick={addToWishlist}
             />
           ) : (
-            <FavoriteBorderIcon className="favorite" />
+            <FavoriteBorderIcon
+              className="favorite"
+              style={{ color: "inherit" }}
+              onClick={addToWishlist}
+            />
           )}
         </div>
         <h3
@@ -349,17 +427,21 @@ const ProductCard: React.FC<GroceryCardProps> = ({
                       Add to Cart <ShoppingCartIcon />
                     </ButtonShape>
                   )}
-                  {isFavorite ? (
+                  {isInWishlist ? (
                     <FavoriteIcon
                       className="FavoriteBorderIcon"
                       style={{ color: Colors.Primary }}
-                      onClick={toggleFavorite}
+                      onClick={() => {
+                        addToWishlist();
+                      }}
                     />
                   ) : (
                     <FavoriteBorderIcon
                       className="FavoriteBorderIcon"
                       style={{ color: Colors.Primary }}
-                      onClick={toggleFavorite}
+                      onClick={() => {
+                        addToWishlist();
+                      }}
                     />
                   )}
                 </div>
