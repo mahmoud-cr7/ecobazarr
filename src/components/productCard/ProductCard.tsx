@@ -51,8 +51,9 @@ interface GroceryCardProps {
   addedToWishlist?: boolean;
   quantity: number;
   categoryRef: string;
-  onIncrease: () => void;
-  onDecrease: () => void;
+  onIncrease?: () => void;
+  onDecrease?: () => void;
+  rating?: number;
 }
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   "& .MuiDialogContent-root": {
@@ -72,6 +73,7 @@ const ProductCard: React.FC<GroceryCardProps> = ({
   quantity,
   categoryRef,
   addedToWishlist: initialAddedToWishlist,
+  rating,
 }) => {
   const [isFavorite, setIsFavorite] = useState(false);
   const [isInCart, setIsInCart] = useState(initialAddedToCart || false);

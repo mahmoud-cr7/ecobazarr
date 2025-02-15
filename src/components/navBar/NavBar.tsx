@@ -197,29 +197,16 @@ const NavBar: React.FC<NavBarProps> = (props) => {
             Home
           </Button>
           <div className="dropdown">
-            <button
-              onClick={() => {
-                setIsShopOpen(!isShopOpen);
-                setIsPagesOpen(false);
-              }}
+            <Button
+              component={Link}
+              to="/shop"
+              className="button"
+              style={{ color: Colors.White }}
             >
               Shop
-              <ArrowDropDownIcon />
-            </button>
-            {isShopOpen && (
-              <div
-                className="dropdown-content"
-                style={{
-                  backgroundColor: "#fff",
-                }}
-              >
-                <a href="#">Option 1</a>
-                <a href="#">Option 2</a>
-                <a href="#">Option 3</a>
-              </div>
-            )}
+            </Button>
           </div>
-          <div className="dropdown">
+          {/* <div className="dropdown">
             <button
               onClick={() => {
                 setIsPagesOpen(!isPagesOpen);
@@ -241,7 +228,7 @@ const NavBar: React.FC<NavBarProps> = (props) => {
                 <a href="#">Option 3</a>
               </div>
             )}
-          </div>
+          </div> */}
           <Button className="button">Blog</Button>
           <Button
             className="button"

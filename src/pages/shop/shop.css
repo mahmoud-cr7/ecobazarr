@@ -1,0 +1,68 @@
+.results {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 10px;
+}
+.selectors {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin-block: 10px;
+  align-items: center;
+}
+.selector {
+  padding-inline: 20px;
+  padding-block: 10px;
+  border: 1px solid #e9e9e9;
+  margin-inline: 5px;
+  cursor: pointer;
+  margin-block: 10px;
+  border-radius: 8px;
+}
+.filter-header {
+  border-block: 1px solid #e9e9e9;
+  padding-block: 10px;
+}
+.filter-header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.active {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+}
+.close-button {
+  background-color: #84D187;
+  border: none;
+  border-radius: 50%;
+  padding: 5px;
+  cursor: pointer;
+  width: 20px;
+  height: 20px;
+  color: white;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: 0.3s;
+}
+.close-button:hover {
+  background-color: #00B207;
+}
+.filter,
+.filters {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+.apply-filters{
+  border-radius: 8px  !important;
+}
+.second-selectors{
+  display: flex;
+  gap: 2px;
+  align-items: center;
+}

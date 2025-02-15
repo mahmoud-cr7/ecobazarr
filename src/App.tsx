@@ -15,6 +15,7 @@ import ContactUS from "./pages/contactUs/ContactUS";
 import CheckOut from "./pages/checkOut/CheckOut";
 import Illustration from "./pages/Illustration/Illustration";
 import Wishlist from "./pages/wishlist/Wishlist";
+import Shop from "./pages/shop/Shop";
 
 function App() {
   const [newsletterOpen, setNewsletterOpen] = useState(false);
@@ -69,6 +70,10 @@ function App() {
         {
           path: "/wishlist",
           element: <Wishlist />,
+        },
+        {
+          path: "/shop",
+          element: <Shop />,
         }
       ],
     },
