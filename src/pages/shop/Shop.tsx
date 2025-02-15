@@ -211,7 +211,7 @@ const Shop: React.FC<ShopProps> = () => {
                     </span>
                     <button
                       className="close-button"
-                      onClick={() => setSelectedPriceRange("Select Category")}
+                      onClick={() => setSelectedPriceRange("")}
                     >
                       X
                     </button>
