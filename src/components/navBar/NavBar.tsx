@@ -229,7 +229,8 @@ const NavBar: React.FC<NavBarProps> = (props) => {
               </div>
             )}
           </div> */}
-          <Button className="button">Blog</Button>
+          <Button className="button"
+            onClick={() => navigate("/blogs")}>Blogs</Button>
           <Button
             className="button"
             onClick={() => {
