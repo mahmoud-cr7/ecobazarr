@@ -16,6 +16,8 @@ import CheckOut from "./pages/checkOut/CheckOut";
 import Illustration from "./pages/Illustration/Illustration";
 import Wishlist from "./pages/wishlist/Wishlist";
 import Shop from "./pages/shop/Shop";
+import Blogs from "./pages/blogs/Blogs";
+import Faqs from "./pages/faqs/Faqs";
 
 function App() {
   const [newsletterOpen, setNewsletterOpen] = useState(false);
@@ -74,6 +76,14 @@ function App() {
         {
           path: "/shop",
           element: <Shop />,
+        },
+        {
+          path: "/blogs",
+          element: <Blogs />,
+        },
+        {
+          path: "/faqs",
+          element: <Faqs />,
         }
       ],
     },
