@@ -18,8 +18,9 @@ import Wishlist from "./pages/wishlist/Wishlist";
 import Shop from "./pages/shop/Shop";
 import Blogs from "./pages/blogs/Blogs";
 import Faqs from "./pages/faqs/Faqs";
+import Blog from "./pages/blog/Blog";
 
-function App() {
+function App(props: any) {
   const [newsletterOpen, setNewsletterOpen] = useState(false);
   useState(() => {
     setNewsletterOpen(true);
@@ -84,7 +85,11 @@ function App() {
         {
           path: "/faqs",
           element: <Faqs />,
-        }
+        },
+        {
+          path: "/blog/:id",
+          element: <Blog />,
+        },
       ],
     },
   ]);

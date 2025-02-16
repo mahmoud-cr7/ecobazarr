@@ -18,6 +18,9 @@ import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import SellIcon from "@mui/icons-material/Sell";
 import PersonIcon from "@mui/icons-material/Person";
 import ChatBubbleIcon from "@mui/icons-material/ChatBubble";
+import Blog from "../blog/Blog";
+import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 interface BlogsProps {
   // Define your props here
 }
@@ -134,7 +137,7 @@ interface Comment {
   content: string;
 }
 
-interface Blog {
+interface BlogInterface {
   id: string;
   name: string;
   date: string;
@@ -146,18 +149,19 @@ interface Blog {
 }
 
 const Blogs: React.FC<BlogsProps> = (props) => {
-  const [blogs, setBlogs] = useState<Blog[]>([]);
-  const [filteredBlogs, setFilteredBlogs] = useState<Blog[]>([]);
+  const [blogs, setBlogs] = useState<BlogInterface[]>([]);
+  const [filteredBlogs, setFilteredBlogs] = useState<BlogInterface[]>([]);
   const [activeTag, setActiveTag] = useState<number | null>(null);
   const [arange, setArrange] = useState<string>("newest");
+  const navigate = useNavigate();
   useEffect(() => {
     const fetchBlogs = async () => {
       try {
         const querySnapshot = await getDocs(collection(db, "blogs"));
-        const blogsData: Blog[] = querySnapshot.docs.map((doc) => ({
+        const blogsData: BlogInterface[] = querySnapshot.docs.map((doc) => ({
           id: doc.id,
           ...doc.data(),
-        })) as Blog[];
+        })) as BlogInterface[];
         setBlogs(blogsData);
       } catch (error) {
         console.error("Error fetching blogs:", error);
@@ -217,6 +221,9 @@ const Blogs: React.FC<BlogsProps> = (props) => {
       blog.description.toLowerCase().includes(query)
     );
     setFilteredBlogs(filtered);
+    };
+    const handleReadMore = (blog: BlogInterface) => {
+      navigate(`/blog/${blog.id}`);
     };
   return (
     <div className="container">
@@ -315,6 +322,7 @@ const Blogs: React.FC<BlogsProps> = (props) => {
                     height="50px"
                     backgroundColor={Colors.White}
                     textColor={Colors.Primary}
+                    onClick={() => handleReadMore(blog)}
                   >
                     Read More <ArrowForwardIcon />
                   </ButtonShape>
