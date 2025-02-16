@@ -19,8 +19,9 @@ import Shop from "./pages/shop/Shop";
 import Blogs from "./pages/blogs/Blogs";
 import Faqs from "./pages/faqs/Faqs";
 import Blog from "./pages/blog/Blog";
+import Product from "./pages/product/Product";
 
-function App(props: any) {
+function App() {
   const [newsletterOpen, setNewsletterOpen] = useState(false);
   useState(() => {
     setNewsletterOpen(true);
@@ -72,7 +73,9 @@ function App(props: any) {
         },
         {
           path: "/wishlist",
-          element: <Wishlist />,
+          element: (
+            <Wishlist id={""} name={""} imageUrl={""} price={0} quantity={0} />
+          ),
         },
         {
           path: "/shop",
@@ -89,6 +92,10 @@ function App(props: any) {
         {
           path: "/blog/:id",
           element: <Blog />,
+        },
+        {
+          path: "/product/:id",
+          element: <Product id={""} name={""} imageUrl={""} price={0} quantity={0} categoryRef={""}  />,
         },
       ],
     },

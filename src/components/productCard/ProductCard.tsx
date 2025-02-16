@@ -32,7 +32,7 @@ import RemoveShoppingCartIcon from "@mui/icons-material/RemoveShoppingCart";
 import logo from "../../assets/logo.png";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { Snackbar } from "@mui/material";
-
+import { useNavigate } from "react-router-dom";
 interface Product {
   id: string;
   name: string;
@@ -85,6 +85,7 @@ const ProductCard: React.FC<GroceryCardProps> = ({
   const [isInWishlist, setIsInWishlist] = useState(
     initialAddedToWishlist || false
   );
+  const navigate  = useNavigate();
 
   const handleClickOpen = () => {
     setOpenDialog(true);
@@ -342,7 +343,7 @@ const ProductCard: React.FC<GroceryCardProps> = ({
                 </div>
               </div>
               <div className="product-info">
-                <h1 className="name">
+                <h1 className="name" onClick={() => navigate(`/product/${id}`)}>
                   {name} <span className="stock">In Stock</span>
                 </h1>
                 <div className="main-details">
