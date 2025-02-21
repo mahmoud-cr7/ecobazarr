@@ -14,6 +14,7 @@ import {
   getDoc,
   getDocs,
   getFirestore,
+  setDoc,
   updateDoc,
 } from "firebase/firestore";
 import { app, db } from "../../firebase/Firebase";
@@ -85,7 +86,7 @@ const ProductCard: React.FC<GroceryCardProps> = ({
   const [isInWishlist, setIsInWishlist] = useState(
     initialAddedToWishlist || false
   );
-  const navigate  = useNavigate();
+  const navigate = useNavigate();
 
   const handleClickOpen = () => {
     setOpenDialog(true);
@@ -113,13 +114,6 @@ const ProductCard: React.FC<GroceryCardProps> = ({
 
     fetchProductData();
   }, [id]);
-  const toggleFavorite = () => {
-    if (user) {
-      setIsFavorite(!isFavorite);
-    } else {
-      setNotAuthorized(true);
-    }
-  };
 
   const updateProductCartStatus = async (status: boolean) => {
     try {
@@ -130,14 +124,7 @@ const ProductCard: React.FC<GroceryCardProps> = ({
     }
   };
 
-  const updateProductWishlistStatus = async (status: boolean) => {
-    try {
-      const productRef = doc(db, "products", id);
-      await updateDoc(productRef, { addedToWishlist: status });
-    } catch (error) {
-      console.error("Error updating product wishlist status:", error);
-    }
-  };
+
 
   const addToCart = async () => {
     if (user) {
@@ -163,6 +150,7 @@ const ProductCard: React.FC<GroceryCardProps> = ({
             imageUrl,
             price,
             quantity: quantities,
+            userId: user.email,
           });
           console.log("Product added to cart:", name);
           setIsInCart(true);
@@ -176,47 +164,66 @@ const ProductCard: React.FC<GroceryCardProps> = ({
     }
   };
   const addToWishlist = async () => {
-    if (user) {
-      if (isInWishlist) {
+    if (!user) {
+      setNotAuthorized(true);
+      return;
+    }
+
+    if (!id) {
+      console.error("Product ID is missing!");
+      return;
+    }
+
+    try {
+      // Reference to the product document
+      const productRef = doc(db, "products", id);
+      const productSnap = await getDoc(productRef);
+
+      if (!productSnap.exists()) {
+        console.log("No such product document!");
+        return;
+      }
+
+      const productData = productSnap.data();
+      const isAlreadyInWishlist = productData.addedToWishlist; // Check wishlist status
+
+      if (isAlreadyInWishlist) {
+        // Remove product from wishlist
         try {
-          // Query the wishlist collection to find the item by name
-          const wishlistQuery = await getDocs(collection(db, "Wishlist"));
-          const wishlistItem = wishlistQuery.docs.find(
-            (doc) => doc.data().name === name
-          );
-
-          // If the product is in the wishlist, remove it
-          if (wishlistItem) {
-            await deleteDoc(doc(db, "Wishlist", wishlistItem.id));
-          }
-
-          console.log("Product removed from wishlist:", name);
+          await deleteDoc(doc(db, "Wishlist", id));
+          console.log("Product removed from wishlist:", productData.name);
           setIsInWishlist(false);
-          updateProductWishlistStatus(false);
+
+          // Update addedToWishlist field in products collection
+          await updateDoc(productRef, { addedToWishlist: false });
         } catch (error) {
           console.error("Error removing from wishlist:", error);
         }
       } else {
+        // Add product to wishlist using the same ID as in products collection
         try {
-          // Add the product to the wishlist
-          await addDoc(collection(db, "Wishlist"), {
-            name,
-            imageUrl,
-            price,
-            quantity,
+          await setDoc(doc(db, "Wishlist", id), {
+            name: productData.name,
+            imageUrl: productData.imageUrl,
+            price: productData.price,
+            quantity: quantities,
+            userId: user.email,
           });
 
-          console.log("Product added to wishlist:", name);
+          console.log("Product added to wishlist:", productData.name);
           setIsInWishlist(true);
-          updateProductWishlistStatus(true);
+
+          // Update addedToWishlist field in products collection
+          await updateDoc(productRef, { addedToWishlist: true });
         } catch (error) {
           console.error("Error adding to wishlist:", error);
         }
       }
-    } else {
-      setNotAuthorized(true);
+    } catch (error) {
+      console.error("Error fetching product:", error);
     }
   };
+
   useEffect(() => {
     const auth = getAuth(app);
 

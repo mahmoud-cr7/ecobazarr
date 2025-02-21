@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import ButtonShape from "../../components/button/Button";
 import Colors from "../../utils/Colors";
-import { Checkbox, FormControlLabel } from "@mui/material";
+import { Checkbox, FormControlLabel, Snackbar } from "@mui/material";
 import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 // import "./SignUp.css";
@@ -11,18 +11,21 @@ import "../signIn/SignIn.css";
 import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 import { app } from "../../firebase/Firebase";
 import { useNavigate } from "react-router-dom";
+import { FirebaseError } from "firebase/app";
 
 interface SignUpProps {
   // Define your props here
   signUp: boolean;
 }
 
-const SignUp: React.FC<SignUpProps> = ({ signUp } = { signUp: false } ) => {
+const SignUp: React.FC<SignUpProps> = ({ signUp } = { signUp: false }) => {
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [authorized, setAuthorized] = useState(false);
+  const [errMsg, setErrMsg] = useState("");
   const [errors, setErrors] = useState<{
     email?: string;
     password?: string;
@@ -46,7 +49,7 @@ const SignUp: React.FC<SignUpProps> = ({ signUp } = { signUp: false } ) => {
     return confirmPassword === password;
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     const newErrors: {
       email?: string;
       password?: string;
@@ -67,7 +70,7 @@ const SignUp: React.FC<SignUpProps> = ({ signUp } = { signUp: false } ) => {
 
     if (!confirmPassword) {
       newErrors.confirmPassword = "Confirm Password is required";
-    } else if (!validateConfirmPassword(confirmPassword)) {
+    } else if (password !== confirmPassword) {
       newErrors.confirmPassword = "Passwords do not match";
     }
 
@@ -76,105 +79,131 @@ const SignUp: React.FC<SignUpProps> = ({ signUp } = { signUp: false } ) => {
       return;
     }
 
-    // If no errors, proceed with form submission
     console.log("Form submitted successfully!");
     setErrors({});
+
     const auth = getAuth(app);
-    createUserWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
-        // Signed up
-        const user = userCredential.user;
-        // ...
-        navigate("/");
-      })
-      .catch((error) => {
-        const errorCode = error.code;
-        const errorMessage = error.message;
-        // ..
-      });
-    // Add your form submission logic here
+
+    try {
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+      console.log("User created:", userCredential.user);
+      navigate("/");
+    } catch (error) {
+      if (error instanceof FirebaseError) {
+        if (error.code === "auth/email-already-in-use") {
+          setAuthorized(true);
+          setErrMsg("Email already in use");
+        } else {
+          setErrMsg(error.message);
+          setAuthorized(true);
+        }
+      } else {
+        setErrMsg("An unexpected error occurred. Please try again.");
+        setAuthorized(true);
+      }
+    }
   };
 
   return (
-    <div className="sign-in container">
-      <h1>Sign Up</h1>
-      <div className="email-container">
-        <input
-          type="email"
-          name="email"
-          className="input email"
-          placeholder="Enter your email"
-          style={{ color: Colors.Gray4 }}
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
-        {errors.email && <p style={{ color: "red" }}>{errors.email}</p>}
-      </div>
-      <div className="password-container">
-        <input
-          type={showPassword ? "text" : "password"}
-          name="password"
-          className="input password"
-          placeholder="Enter your password"
-          style={{ color: Colors.Gray4 }}
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
-        <span className="toggle-password" onClick={togglePasswordVisibility}>
-          {showPassword ? (
-            <VisibilityOffIcon />
-          ) : (
-            <RemoveRedEyeIcon style={{ color: Colors.Primary }} />
+    <>
+      <Snackbar
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+        open={authorized}
+        onClose={() => setAuthorized(false)}
+        message={errMsg}
+        sx={{
+          "& .MuiSnackbarContent-root": {
+            fontSize: "1.2rem",
+            padding: "20px",
+            minWidth: "400px",
+            backgroundColor: Colors.Danger,
+          },
+        }}
+      />
+      <div className="sign-in container">
+        <h1>Sign Up</h1>
+        <div className="email-container">
+          <input
+            type="email"
+            name="email"
+            className="input email"
+            placeholder="Enter your email"
+            style={{ color: Colors.Gray4 }}
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+          {errors.email && <p style={{ color: "red" }}>{errors.email}</p>}
+        </div>
+        <div className="password-container">
+          <input
+            type={showPassword ? "text" : "password"}
+            name="password"
+            className="input password"
+            placeholder="Enter your password"
+            style={{ color: Colors.Gray4 }}
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+          <span className="toggle-password" onClick={togglePasswordVisibility}>
+            {showPassword ? (
+              <VisibilityOffIcon />
+            ) : (
+              <RemoveRedEyeIcon style={{ color: Colors.Primary }} />
+            )}
+          </span>
+          {errors.password && <p style={{ color: "red" }}>{errors.password}</p>}
+        </div>
+        <div className="password-container">
+          <input
+            type={showPassword ? "text" : "password"}
+            name="confirmPassword"
+            className="input password"
+            placeholder="Confirm password"
+            style={{ color: Colors.Gray4 }}
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+          />
+          <span className="toggle-password" onClick={togglePasswordVisibility}>
+            {showPassword ? (
+              <VisibilityOffIcon />
+            ) : (
+              <RemoveRedEyeIcon style={{ color: Colors.Primary }} />
+            )}
+          </span>
+          {errors.confirmPassword && (
+            <p style={{ color: "red" }}>{errors.confirmPassword}</p>
           )}
-        </span>
-        {errors.password && <p style={{ color: "red" }}>{errors.password}</p>}
-      </div>
-      <div className="password-container">
-        <input
-          type={showPassword ? "text" : "password"}
-          name="confirmPassword"
-          className="input password"
-          placeholder="Confirm password"
-          style={{ color: Colors.Gray4 }}
-          value={confirmPassword}
-          onChange={(e) => setConfirmPassword(e.target.value)}
-        />
-        <span className="toggle-password" onClick={togglePasswordVisibility}>
-          {showPassword ? (
-            <VisibilityOffIcon />
-          ) : (
-            <RemoveRedEyeIcon style={{ color: Colors.Primary }} />
-          )}
-        </span>
-        {errors.confirmPassword && (
-          <p style={{ color: "red" }}>{errors.confirmPassword}</p>
-        )}
-      </div>
-      <div className="remember-me" style={{ color: Colors.Gray5 }}>
-        <FormControlLabel
-          control={
-            <Checkbox defaultChecked style={{ color: Colors.Primary }} />
-          }
-          label="Accept all terms & Conditions"
-        />
-      </div>
-      <ButtonShape
-        width="100%"
-        height="40px"
-        backgroundColor={Colors.Primary}
-        textColor="#fff"
-        onClick={handleSubmit}
-      >
-        Create Account
-      </ButtonShape>
+        </div>
+        <div className="remember-me" style={{ color: Colors.Gray5 }}>
+          <FormControlLabel
+            control={
+              <Checkbox defaultChecked style={{ color: Colors.Primary }} />
+            }
+            label="Accept all terms & Conditions"
+          />
+        </div>
+        <ButtonShape
+          width="100%"
+          height="40px"
+          backgroundColor={Colors.Primary}
+          textColor="#fff"
+          onClick={handleSubmit}
+        >
+          Create Account
+        </ButtonShape>
 
-      <p style={{ color: Colors.Gray5 }}>
-        Already have an account?{" "}
-        <a style={{ color: Colors.Gray9 }} href="/signIn">
-          Sign In
-        </a>
-      </p>
-    </div>
+        <p style={{ color: Colors.Gray5 }}>
+          Already have an account?{" "}
+          <a style={{ color: Colors.Gray9 }} href="/signIn">
+            Sign In
+          </a>
+        </p>
+      </div>
+    </>
   );
 };
 

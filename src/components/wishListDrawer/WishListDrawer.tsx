@@ -21,11 +21,15 @@ import {
   getDocs,
   updateDoc,
   doc,
+  query,
+  where,
 } from "firebase/firestore";
 import { app } from "../../firebase/Firebase";
 import { useEffect } from "react";
 import { onSnapshot } from "firebase/firestore";
-import "./wishListDrawer.css"
+import "./wishListDrawer.css";
+import { useState } from "react";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
 // Define the Product interface
 interface Product {
   id: string;
@@ -44,7 +48,6 @@ interface WishlistProps {
 // Product Component
 const ProductItem: React.FC<{
   product: Product;
-
 }> = ({ product }) => {
   return (
     <ListItem disablePadding>
@@ -63,16 +66,35 @@ const ProductItem: React.FC<{
   );
 };
 
-
 export default function Wishlist({ faVOpen, setFavOpen }: WishlistProps) {
   const [cartItems, setCartItems] = React.useState<Product[]>([]);
   const navigate = useNavigate();
   const db = getFirestore(app);
+  const [user, setUser] = useState<{ email: string } | null>(null);
+  const [quantities, setQuantities] = useState<{ [key: string]: number }>({});
 
   useEffect(() => {
-    const cartCollection = collection(db, "Wishlist");
+    const auth = getAuth(app);
 
-    const unsubscribe = onSnapshot(cartCollection, (snapshot) => {
+    // Listen for authentication state changes
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setUser({ email: user.email || "" });
+      } else {
+        setUser(null);
+      }
+    });
+
+    // Cleanup subscription on unmount
+    return () => unsubscribe();
+  }, []);
+
+  useEffect(() => {
+    if (!user) return;
+    const cartCollection = collection(db, "Wishlist");
+    const cartQuery = query(cartCollection, where("userId", "==", user.email)); // Filter by userId
+
+    const unsubscribe = onSnapshot(cartQuery, (snapshot) => {
       const cartData = snapshot.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
@@ -83,7 +105,7 @@ export default function Wishlist({ faVOpen, setFavOpen }: WishlistProps) {
     });
 
     return () => unsubscribe();
-  }, [db]);
+  }, [db , user]);
 
   const toggleDrawer = (newOpen: boolean) => () => {
     setFavOpen(newOpen);
@@ -104,7 +126,7 @@ export default function Wishlist({ faVOpen, setFavOpen }: WishlistProps) {
         ))}
       </List>
       <Divider />
-     
+
       <Box sx={{ display: "flex", justifyContent: "flex-end", p: 2 }}>
         <ButtonShape
           height="50px"

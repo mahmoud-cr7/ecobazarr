@@ -10,10 +10,11 @@ import {
   getDocs,
   onSnapshot,
   query,
+  setDoc,
   updateDoc,
   where,
 } from "firebase/firestore";
-import { db } from "../../firebase/Firebase";
+import { app, db } from "../../firebase/Firebase";
 import "./wishlist.css";
 import ButtonShape from "../../components/button/Button";
 import Colors from "../../utils/Colors";
@@ -24,6 +25,7 @@ import PinterestIcon from "@mui/icons-material/Pinterest";
 import { Snackbar } from "@mui/material";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import RemoveShoppingCartIcon from "@mui/icons-material/RemoveShoppingCart";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
 interface WishlistProps {
   id: string;
   name: string;
@@ -41,6 +43,9 @@ interface Product {
   imageUrl: string;
   quantity: number;
   addedToCart?: boolean;
+  addedToWishlist?: boolean;
+  setIsInCart?: React.Dispatch<React.SetStateAction<boolean>>;
+  userId: string;
 }
 
 const Wishlist: React.FC<WishlistProps> = ({
@@ -53,27 +58,48 @@ const Wishlist: React.FC<WishlistProps> = ({
   const [cartStack, setCartStack] = useState(false);
   const [cartStatus, setCartStatus] = useState<{ [key: string]: boolean }>({});
   const [allProducts, setAllProducts] = useState<Product[]>([]);
+  const [isInCart, setIsInCart] = useState(initialAddedToCart || false);
+  const [user, setUser] = useState<{ email: string } | null>(null);
+
   useEffect(() => {
+    const auth = getAuth(app);
+
+    // Listen for authentication state changes
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setUser({ email: user.email || "" });
+      } else {
+        setUser(null);
+      }
+    });
+
+    // Cleanup subscription on unmount
+    return () => unsubscribe();
+  }, []);
+
+  useEffect(() => {
+    if (!user) return; // Ensure user is logged in before querying
+
     const cartCollection = collection(db, "Wishlist");
-    const unsubscribe = onSnapshot(cartCollection, (snapshot) => {
+    const cartQuery = query(cartCollection, where("userId", "==", user.email)); // Filter by userId
+
+    const unsubscribe = onSnapshot(cartQuery, (snapshot) => {
       const cartData = snapshot.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
       })) as Product[];
+
       setCartItems(cartData);
+
     });
 
     return () => unsubscribe();
-  }, []);
-  console.log(cartItems);
+  }, [db, user]);
 
-  useEffect(() => {
-    setCartStatus((prev) => ({ ...prev, [id]: initialAddedToCart || false }));
-  }, [id, initialAddedToCart]);
   useEffect(() => {
     const getProducts = async () => {
       try {
-        const productsCollection = collection(db, "products"); // Replace "products" with your collection name
+        const productsCollection = collection(db, "products");
         const productsSnapshot = await getDocs(productsCollection);
         const productsList = productsSnapshot.docs.map((doc) => {
           const data = doc.data();
@@ -83,21 +109,75 @@ const Wishlist: React.FC<WishlistProps> = ({
             price: data.price,
             imageUrl: data.imageUrl,
             quantity: data.quantity,
+            addedToCart: data.addedToCart || false, // Ensure default value
           } as Product;
         });
+
         setAllProducts(productsList);
-        // console.log(productsList);
-        return productsList;
+
+        // Set individual cart status for each product
+        const cartStatusMap: { [key: string]: boolean } = {};
+        productsList.forEach((product) => {
+          cartStatusMap[product.id] = product.addedToCart || false;
+        });
+
+        setCartStatus(cartStatusMap);
       } catch (error) {
-        // console.error("Error fetching products:", error);
+        console.error("Error fetching products:", error);
       }
     };
 
     getProducts();
-  }, [id]);
-  const status = (productName: string): boolean =>
-    allProducts.some((product) => product.addedToCart);
+  }, []);
 
+  const addToCart = async (productId: string) => {
+    try {
+      const productRef = doc(db, "products", productId);
+      const productSnap = await getDoc(productRef);
+
+      if (!productSnap.exists()) {
+        console.log("No such product document!");
+        return;
+      }
+
+      const productData = productSnap.data();
+      const isAlreadyInCart = productData.addedToCart;
+
+      if (isAlreadyInCart) {
+        // Remove from cart
+        await deleteDoc(doc(db, "cart", productId));
+        console.log("Product removed from cart:", productData.name);
+
+        await updateDoc(productRef, { addedToCart: false });
+
+        // Update only the clicked product's `addedToCart` state
+        setCartStatus((prevStatus) => ({
+          ...prevStatus,
+          [productId]: false,
+        }));
+      } else {
+        // Add to cart
+        await setDoc(doc(db, "cart", productId), {
+          name: productData.name,
+          imageUrl: productData.imageUrl,
+          price: productData.price,
+          quantity: 1,
+          userId: user?.email,
+        });
+        console.log("Product added to cart:", productData.name);
+
+        await updateDoc(productRef, { addedToCart: true });
+
+        // Update only the clicked product's `addedToCart` state
+        setCartStatus((prevStatus) => ({
+          ...prevStatus,
+          [productId]: true,
+        }));
+      }
+    } catch (error) {
+      console.error("Error updating cart:", error);
+    }
+  };
   const handleDeleteProduct = async (
     productId: string,
     productName: string
@@ -122,80 +202,8 @@ const Wishlist: React.FC<WishlistProps> = ({
 
       setWishlistChanged(true);
     } catch (error) {
-      console.error("Error deleting product from cart:", error);
+      // console.error("Error deleting product from cart:", error);
       setWishlistChanged(false);
-    }
-  };
-  const updateProductCartStatus = async (
-    productName: string,
-    status: boolean
-  ) => {
-    try {
-      const productsRef = collection(db, "products");
-      const q = query(productsRef, where("name", "==", productName));
-      const querySnapshot = await getDocs(q);
-
-      if (!querySnapshot.empty) {
-        querySnapshot.forEach(async (docSnapshot) => {
-          const productRef = doc(db, "products", docSnapshot.id);
-          await updateDoc(productRef, { addedToCart: status });
-
-          console.log(`Updated ${productName}: addedToCart = ${status}`);
-        });
-      } else {
-        console.warn(
-          `Product with name "${productName}" not found in Firestore.`
-        );
-      }
-    } catch (error) {
-      console.error("Error updating product cart status:", error);
-    }
-  };
-
-  const addToCart = async (productId: string, productName: string) => {
-    const product = cartItems.find((item) => item.id === productId);
-
-    if (!product) {
-      console.error(`Product "${productName}" not found in wishlist.`);
-      return;
-    }
-
-    const isCurrentlyInCart = cartStatus[productId] || false;
-
-    if (isCurrentlyInCart) {
-      try {
-        const cartQuery = await getDocs(collection(db, "cart"));
-        const cartItem = cartQuery.docs.find(
-          (doc) => doc.data().name === product.name
-        );
-
-        if (cartItem) {
-          await deleteDoc(doc(db, "cart", cartItem.id));
-        }
-
-        console.log(`Removed "${product.name}" from cart.`);
-        setCartStatus((prev) => ({ ...prev, [productId]: false }));
-        updateProductCartStatus(product.name, false);
-      } catch (error) {
-        console.error("Error removing from cart:", error);
-      }
-    } else {
-      try {
-        await addDoc(collection(db, "cart"), {
-          id: product.id,
-          name: product.name,
-          price: product.price,
-          imageUrl: product.imageUrl,
-          quantity: 1,
-        });
-
-        console.log(`Added "${product.name}" to cart.`);
-        setCartStack(true);
-        setCartStatus((prev) => ({ ...prev, [productId]: true }));
-        updateProductCartStatus(product.name, true);
-      } catch (error) {
-        console.error("Error adding to cart:", error);
-      }
     }
   };
 
@@ -270,16 +278,17 @@ const Wishlist: React.FC<WishlistProps> = ({
                             textColor={Colors.White}
                             className="add-to-cart"
                             backgroundColor={
-                              status(item.name)
+                              cartStatus[item.id] && user?.email === item.userId
                                 ? Colors.SoftPrimary
                                 : Colors.Primary
                             }
-                            onClick={() => addToCart(item.id, item.name)} // Pass `item.id` instead of calling addToCart directly
+                            onClick={() => addToCart(item.id)}
                           >
-                            {status(item.name)
+                            {cartStatus[item.id] && user?.email === item.userId
                               ? "Remove from Cart"
                               : "Add to Cart"}
-                            {status(item.name) ? (
+                            {cartStatus[item.id] &&
+                            user?.email === item.userId ? (
                               <RemoveShoppingCartIcon />
                             ) : (
                               <ShoppingCartIcon />

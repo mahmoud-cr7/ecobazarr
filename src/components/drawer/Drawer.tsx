@@ -22,11 +22,14 @@ import {
   getDocs,
   updateDoc,
   doc,
+  query,
+  where,
 } from "firebase/firestore";
 import { app } from "../../firebase/Firebase";
 import { useEffect } from "react";
 import { onSnapshot } from "firebase/firestore";
-
+import { useState } from "react";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
 // Define the Product interface
 interface Product {
   id: string;
@@ -48,6 +51,7 @@ const ProductItem: React.FC<{
   onIncrease: () => void;
   onDecrease: () => void;
 }> = ({ product, onIncrease, onDecrease }) => {
+
   return (
     <ListItem disablePadding>
       <ListItemButton>
@@ -79,23 +83,52 @@ export default function TemporaryDrawer({
   const [cartItems, setCartItems] = React.useState<Product[]>([]);
   const navigate = useNavigate();
   const db = getFirestore(app);
+  const [user, setUser] = useState<{ email: string } | null>(null);
+  const [quantities, setQuantities] = useState<{ [key: string]: number }>({});
 
   useEffect(() => {
-    const cartCollection = collection(db, "cart");
+    const auth = getAuth(app);
 
-    const unsubscribe = onSnapshot(cartCollection, (snapshot) => {
+    // Listen for authentication state changes
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setUser({ email: user.email || "" });
+      } else {
+        setUser(null);
+      }
+    });
+
+    // Cleanup subscription on unmount
+    return () => unsubscribe();
+  }, []);
+
+  useEffect(() => {
+    if (!user) return; // Ensure user is logged in before querying
+
+    const cartCollection = collection(db, "cart");
+    const cartQuery = query(cartCollection, where("userId", "==", user.email)); // Filter by userId
+
+    const unsubscribe = onSnapshot(cartQuery, (snapshot) => {
       const cartData = snapshot.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
       })) as Product[];
 
       setCartItems(cartData);
-      console.log("Updated cart data:", cartData);
+
+      setQuantities((prev) => {
+        const updatedQuantities = { ...prev };
+        cartData.forEach((product) => {
+          if (!(product.id in updatedQuantities)) {
+            updatedQuantities[product.id] = product.quantity || 1;
+          }
+        });
+        return updatedQuantities;
+      });
     });
 
     return () => unsubscribe();
-  }, [db]);
-
+  }, [db, user]); // Ensure effect re-runs when the user changes
   const handleIncreaseQuantity = async (productId: string) => {
     const productRef = doc(db, "cart", productId);
     const product = cartItems.find((item) => item.id === productId);
@@ -138,7 +171,7 @@ export default function TemporaryDrawer({
   const handleGoToCart = () => {
     navigate("/cart");
     setOpen(false);
-  }
+  };
 
   const DrawerList = (
     <Box sx={{ width: 350 }} role="presentation">

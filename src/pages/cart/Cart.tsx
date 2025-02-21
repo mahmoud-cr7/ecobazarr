@@ -17,6 +17,7 @@ import ButtonShape from "../../components/button/Button";
 import Colors from "../../utils/Colors";
 import { useNavigate } from "react-router-dom";
 import { Snackbar } from "@mui/material";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
 
 interface Product {
   id: string;
@@ -35,15 +36,36 @@ const Cart: React.FC = () => {
   const [coupon, setCoupon] = useState(0);
   const [couponInput, setCouponInput] = useState("");
   const [invalidCoupon, setInvalidCoupon] = useState(false);
+  const [user, setUser] = useState<{ email: string } | null>(null);
+
   const [Shipping, setShipping] = useState(10);
   const navigate = useNavigate();
   const db = getFirestore(app);
   const couponCode = ["ECOBAZAR20", "ECOBAZAR30", "ECOBAZAR40"];
 
   useEffect(() => {
-    const cartCollection = collection(db, "cart");
+    const auth = getAuth(app);
 
-    const unsubscribe = onSnapshot(cartCollection, (snapshot) => {
+    // Listen for authentication state changes
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setUser({ email: user.email || "" });
+      } else {
+        setUser(null);
+      }
+    });
+
+    // Cleanup subscription on unmount
+    return () => unsubscribe();
+  }, []);
+
+  useEffect(() => {
+    if (!user) return; // Ensure user is logged in before querying
+
+    const cartCollection = collection(db, "cart");
+    const cartQuery = query(cartCollection, where("userId", "==", user.email)); // Filter by userId
+
+    const unsubscribe = onSnapshot(cartQuery, (snapshot) => {
       const cartData = snapshot.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
@@ -63,7 +85,7 @@ const Cart: React.FC = () => {
     });
 
     return () => unsubscribe();
-  }, [db]);
+  }, [db, user]); // Ensure effect re-runs when the user changes
 
   const increaseQuantity = (id: string) => {
     setQuantities((prev) => ({
@@ -139,7 +161,7 @@ const Cart: React.FC = () => {
       setInvalidCoupon(true);
     }
   };
-  
+
   return (
     <>
       <Snackbar

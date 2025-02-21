@@ -21,6 +21,8 @@ import {
   addDoc,
   doc,
   setDoc,
+  query,
+  where,
 } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
 import Wishlist from "../wishListDrawer/WishListDrawer";
@@ -28,14 +30,28 @@ interface NavBarProps {
   // Define your props here
 }
 const getCartCount = async (db: Firestore): Promise<number> => {
+  const auth = getAuth();
+  const user = auth.currentUser; // Get the currently signed-in user
+
+  if (!user) return 0; // If no user is logged in, return 0
+
   const cartCollection = collection(db, "cart");
-  const cartSnapshot = await getDocs(cartCollection);
-  return cartSnapshot.size; // Returns the number of documents
+  const cartQuery = query(cartCollection, where("userId", "==", user.email)); // Filter by userId
+  const cartSnapshot = await getDocs(cartQuery);
+
+  return cartSnapshot.size; // Returns the number of matching documents
 };
 const getWishListCount = async (db: Firestore): Promise<number> => {
-  const wishListCollection = collection(db, "Wishlist");
-  const wishListSnapshot = await getDocs(wishListCollection);
-  return wishListSnapshot.size; // Returns the number of documents
+  const auth = getAuth();
+  const user = auth.currentUser; // Get the currently signed-in user
+
+  if (!user) return 0; // If no user is logged in, return 0
+
+  const cartCollection = collection(db, "Wishlist");
+  const cartQuery = query(cartCollection, where("userId", "==", user.email)); // Filter by userId
+  const cartSnapshot = await getDocs(cartQuery);
+
+  return cartSnapshot.size; // Returns the number of matching documents
 }
 const NavBar: React.FC<NavBarProps> = (props) => {
   const [isShopOpen, setIsShopOpen] = useState(false);

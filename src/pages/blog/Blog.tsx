@@ -195,9 +195,7 @@ const Blog: React.FC = () => {
 
     fetchBlog();
   }, [blogId, success]);
-  const handleTagClicked = (tag: Tag) => {
-    setActiveTag(tag.id); // Set the active tag
-  };
+
   const handleAddComment = async () => {
     if (!commentName || !commentContent) {
       setAlert(true);
@@ -260,9 +258,7 @@ const Blog: React.FC = () => {
       setVisibleComments((prev) => prev + 3); // Show next 3 comments
     }
   };
-const ActiveTags = ()=>{
 
-}
   return (
     <>
       <Snackbar
