@@ -34,6 +34,8 @@ import logo from "../../assets/logo.png";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { Snackbar } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import { arrayUnion, arrayRemove } from "firebase/firestore";
+
 interface Product {
   id: string;
   name: string;
@@ -55,6 +57,8 @@ interface GroceryCardProps {
   onIncrease?: () => void;
   onDecrease?: () => void;
   rating?: number;
+  cartUsers?: string[];
+  wishUsers?: string[];
 }
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   "& .MuiDialogContent-root": {
@@ -75,6 +79,8 @@ const ProductCard: React.FC<GroceryCardProps> = ({
   categoryRef,
   addedToWishlist: initialAddedToWishlist,
   rating,
+  cartUsers,
+  wishUsers,
 }) => {
   const [isFavorite, setIsFavorite] = useState(false);
   const [isInCart, setIsInCart] = useState(initialAddedToCart || false);
@@ -114,7 +120,18 @@ const ProductCard: React.FC<GroceryCardProps> = ({
 
     fetchProductData();
   }, [id]);
+  useEffect(() => {
+    const auth = getAuth(app);
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setUser({ email: user.email || "" });
+      } else {
+        setUser(null);
+      }
+    });
 
+    return () => unsubscribe();
+  }, []);
   const updateProductCartStatus = async (status: boolean) => {
     try {
       const productRef = doc(db, "products", id);
@@ -124,123 +141,145 @@ const ProductCard: React.FC<GroceryCardProps> = ({
     }
   };
 
+const addToCart = async () => {
+  if (!user) {
+    setNotAuthorized(true);
+    return;
+  }
 
+  try {
+    const productRef = doc(db, "products", id);
+    const productSnap = await getDoc(productRef);
 
-  const addToCart = async () => {
-    if (user) {
-      if (isInCart) {
-        try {
-          const cartQuery = await getDocs(collection(db, "cart"));
-          const cartItem = cartQuery.docs.find(
-            (doc) => doc.data().name === name
-          );
-          if (cartItem) {
-            await deleteDoc(doc(db, "cart", cartItem.id));
-          }
-          console.log("Product removed from cart:", name);
-          setIsInCart(false);
-          updateProductCartStatus(false);
-        } catch (error) {
-          console.error("Error removing from cart:", error);
-        }
+    if (!productSnap.exists()) {
+      console.error("Product not found");
+      return;
+    }
+
+    const cartUsers = productSnap.data().cartUsers || [];
+    const isUserInCartUsers = cartUsers.includes(user.email);
+
+    const cartQuery = await getDocs(collection(db, "cart"));
+    const cartItem = cartQuery.docs.find((doc) => doc.data().name === name);
+
+    if (cartItem) {
+      const updatedUsersMails = cartItem.data().usersMails.includes(user.email)
+        ? cartItem.data().usersMails.filter((email:string) => email !== user.email)
+        : [...cartItem.data().usersMails, user.email];
+
+      if (updatedUsersMails.length > 0) {
+        await updateDoc(doc(db, "cart", cartItem.id), {
+          usersMails: updatedUsersMails,
+        });
       } else {
-        try {
-          await addDoc(collection(db, "cart"), {
-            name,
-            imageUrl,
-            price,
-            quantity: quantities,
-            userId: user.email,
-          });
-          console.log("Product added to cart:", name);
-          setIsInCart(true);
-          updateProductCartStatus(true);
-        } catch (error) {
-          console.error("Error adding to cart:", error);
-        }
+        await deleteDoc(doc(db, "cart", cartItem.id));
       }
+
+      await updateDoc(productRef, {
+        cartUsers: isUserInCartUsers
+          ? arrayRemove(user.email)
+          : arrayUnion(user.email),
+      });
+
+      // **Update UI immediately**
+      setIsInCart(!isUserInCartUsers);
+      updateProductCartStatus(!isUserInCartUsers);
     } else {
-      setNotAuthorized(true);
+      await updateDoc(productRef, {
+        cartUsers: arrayUnion(user.email),
+      });
+
+      await addDoc(collection(db, "cart"), {
+        name,
+        imageUrl,
+        price,
+        quantity: quantities,
+        usersMails: [user.email],
+      });
+
+      setIsInCart(true);
+      updateProductCartStatus(true);
     }
-  };
-  const addToWishlist = async () => {
-    if (!user) {
-      setNotAuthorized(true);
+  } catch (error) {
+    console.error("Error updating cart:", error);
+  }
+};
+
+
+const addToWishlist = async () => {
+  if (!user) {
+    setNotAuthorized(true);
+    return;
+  }
+
+  if (!id) {
+    console.error("Product ID is missing!");
+    return;
+  }
+
+  try {
+    const productRef = doc(db, "products", id);
+    const productSnap = await getDoc(productRef);
+
+    if (!productSnap.exists()) {
+      console.log("No such product document!");
       return;
     }
 
-    if (!id) {
-      console.error("Product ID is missing!");
-      return;
-    }
+    const productData = productSnap.data();
+    const isAlreadyInWishlist = productData.wishUsers?.includes(user.email);
+    const wishlistRef = doc(db, "Wishlist", id);
+    const wishlistSnap = await getDoc(wishlistRef);
 
-    try {
-      // Reference to the product document
-      const productRef = doc(db, "products", id);
-      const productSnap = await getDoc(productRef);
+    if (isAlreadyInWishlist) {
+      if (wishlistSnap.exists()) {
+        const wishlistData = wishlistSnap.data();
+        const updatedUsersMails = wishlistData.usersMails.filter(
+          (email: string) => email !== user.email
+        );
 
-      if (!productSnap.exists()) {
-        console.log("No such product document!");
-        return;
-      }
-
-      const productData = productSnap.data();
-      const isAlreadyInWishlist = productData.addedToWishlist; // Check wishlist status
-
-      if (isAlreadyInWishlist) {
-        // Remove product from wishlist
-        try {
-          await deleteDoc(doc(db, "Wishlist", id));
-          console.log("Product removed from wishlist:", productData.name);
-          setIsInWishlist(false);
-
-          // Update addedToWishlist field in products collection
-          await updateDoc(productRef, { addedToWishlist: false });
-        } catch (error) {
-          console.error("Error removing from wishlist:", error);
-        }
-      } else {
-        // Add product to wishlist using the same ID as in products collection
-        try {
-          await setDoc(doc(db, "Wishlist", id), {
-            name: productData.name,
-            imageUrl: productData.imageUrl,
-            price: productData.price,
-            quantity: quantities,
-            userId: user.email,
-          });
-
-          console.log("Product added to wishlist:", productData.name);
-          setIsInWishlist(true);
-
-          // Update addedToWishlist field in products collection
-          await updateDoc(productRef, { addedToWishlist: true });
-        } catch (error) {
-          console.error("Error adding to wishlist:", error);
+        if (updatedUsersMails.length > 0) {
+          await updateDoc(wishlistRef, { usersMails: updatedUsersMails });
+        } else {
+          await deleteDoc(wishlistRef);
         }
       }
-    } catch (error) {
-      console.error("Error fetching product:", error);
-    }
-  };
 
-  useEffect(() => {
-    const auth = getAuth(app);
+      console.log("Product removed from wishlist:", productData.name);
+      setIsInWishlist(false);
 
-    // Listen for authentication state changes
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user) {
-        // User is signed in
-        setUser({ email: user.email || "" });
+      await updateDoc(productRef, {
+        addedToWishlist: false,
+        wishUsers: arrayRemove(user.email),
+      });
+    } else {
+      if (wishlistSnap.exists()) {
+        await updateDoc(wishlistRef, {
+          usersMails: arrayUnion(user.email),
+        });
       } else {
-        // User is signed out
-        setUser(null);
+        await setDoc(wishlistRef, {
+          name: productData.name,
+          imageUrl: productData.imageUrl,
+          price: productData.price,
+          quantity: quantities,
+          usersMails: [user.email],
+        });
       }
-    });
 
-    // Cleanup subscription on unmount
-    return () => unsubscribe();
-  }, []);
+      console.log("Product added to wishlist:", productData.name);
+      setIsInWishlist(true);
+
+      await updateDoc(productRef, {
+        addedToWishlist: true,
+        wishUsers: arrayUnion(user.email),
+      });
+    }
+  } catch (error) {
+    console.error("Error updating wishlist:", error);
+  }
+};
+
   const increaseQuantity = () => {
     setQuantities((prev) => prev + 1);
   };
@@ -269,7 +308,7 @@ const ProductCard: React.FC<GroceryCardProps> = ({
       <div className="product-card">
         <img src={imageUrl} alt={name} className="image" />
         <div className="favorite-icon">
-          {isInWishlist ? (
+          {user && wishUsers?.includes(user.email) ? (
             <FavoriteIcon
               className="favorite"
               style={{ color: Colors.Primary }}
@@ -294,7 +333,9 @@ const ProductCard: React.FC<GroceryCardProps> = ({
           <p>${price}</p>
           <div>
             <ShoppingCartIcon
-              style={{ color: isInCart ? Colors.Primary : "inherit" }}
+              style={{
+                color: isInCart ? Colors.Primary : "inherit",
+              }}
               className="cart"
               onClick={addToCart}
             />
@@ -437,7 +478,7 @@ const ProductCard: React.FC<GroceryCardProps> = ({
                       Add to Cart <ShoppingCartIcon />
                     </ButtonShape>
                   )}
-                  {isInWishlist ? (
+                  {user && wishUsers?.includes(user.email) ? (
                     <FavoriteIcon
                       className="FavoriteBorderIcon"
                       style={{ color: Colors.Primary }}

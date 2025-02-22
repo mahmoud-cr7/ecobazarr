@@ -36,7 +36,10 @@ const getCartCount = async (db: Firestore): Promise<number> => {
   if (!user) return 0; // If no user is logged in, return 0
 
   const cartCollection = collection(db, "cart");
-  const cartQuery = query(cartCollection, where("userId", "==", user.email)); // Filter by userId
+  const cartQuery = query(
+    cartCollection,
+    where("usersMails", "array-contains", user.email)
+  );
   const cartSnapshot = await getDocs(cartQuery);
 
   return cartSnapshot.size; // Returns the number of matching documents
@@ -48,11 +51,13 @@ const getWishListCount = async (db: Firestore): Promise<number> => {
   if (!user) return 0; // If no user is logged in, return 0
 
   const cartCollection = collection(db, "Wishlist");
-  const cartQuery = query(cartCollection, where("userId", "==", user.email)); // Filter by userId
-  const cartSnapshot = await getDocs(cartQuery);
+  const cartQuery = query(
+    cartCollection,
+    where("usersMails", "array-contains", user.email)
+  );  const cartSnapshot = await getDocs(cartQuery);
 
   return cartSnapshot.size; // Returns the number of matching documents
-}
+};
 const NavBar: React.FC<NavBarProps> = (props) => {
   const [isShopOpen, setIsShopOpen] = useState(false);
   const [isPagesOpen, setIsPagesOpen] = useState(false);
@@ -65,7 +70,7 @@ const NavBar: React.FC<NavBarProps> = (props) => {
 
   getCartCount(db).then((count) => setCartCount(count));
   getWishListCount(db).then((count) => setWishListCount(count));
-  
+
   useEffect(() => {
     const auth = getAuth(app);
 
@@ -245,8 +250,9 @@ const NavBar: React.FC<NavBarProps> = (props) => {
               </div>
             )}
           </div> */}
-          <Button className="button"
-            onClick={() => navigate("/blogs")}>Blogs</Button>
+          <Button className="button" onClick={() => navigate("/blogs")}>
+            Blogs
+          </Button>
           <Button
             className="button"
             onClick={() => {

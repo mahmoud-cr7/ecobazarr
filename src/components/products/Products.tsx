@@ -18,6 +18,8 @@ interface Product {
   quantity: number;
   addedToCart?: boolean;
   categoryRef: string;
+  cartUsers: string[];
+  wishUsers: string[];
 }
 const fetchProductsFromFirestore = async (): Promise<Product[]> => {
   const querySnapshot = await getDocs(collection(db, "products"));
@@ -77,6 +79,8 @@ const App: React.FC = () => {
             addedToCart={product.addedToCart}
             quantity={product.quantity}
             categoryRef={product.categoryRef}
+            cartUsers={product.cartUsers}
+            wishUsers={product.wishUsers}
           />
         ))}
       </div>

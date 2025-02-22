@@ -56,17 +56,17 @@ const shippingServices = {
 
 const Home: React.FC<HomeProps> = ({ newsletterOpen } = { newsletterOpen: false } ) => {
   const [timeLeft, setTimeLeft] = useState(20 * 24 * 60 * 60); // 20 days in seconds
-  useEffect(() => {
-    if (timeLeft === 0) return; // Stop the timer when it reaches 0
+  // useEffect(() => {
+  //   if (timeLeft === 0) return; // Stop the timer when it reaches 0
 
-    // Set up the timer
-    const timer = setInterval(() => {
-      setTimeLeft((prevTime) => prevTime - 1); // Decrease timeLeft by 1 every second
-    }, 1000);
+  //   // Set up the timer
+  //   const timer = setInterval(() => {
+  //     setTimeLeft((prevTime) => prevTime - 1); // Decrease timeLeft by 1 every second
+  //   }, 1000);
 
-    // Clean up the timer when the component unmounts or timeLeft reaches 0
-    return () => clearInterval(timer);
-  }, [timeLeft]);
+  //   // Clean up the timer when the component unmounts or timeLeft reaches 0
+  //   return () => clearInterval(timer);
+  // }, [timeLeft]);
 
   const formatTime = (time: number) => {
     const days = Math.floor(time / (24 * 60 * 60));

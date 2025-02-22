@@ -5,6 +5,8 @@ import { useParams } from "react-router-dom";
 import "./product.css";
 import {
   addDoc,
+  arrayRemove,
+  arrayUnion,
   collection,
   deleteDoc,
   doc,
@@ -48,6 +50,8 @@ interface Product {
   quantity: number;
   categoryRef: string;
   addedToCart?: boolean;
+  cartUsers?: string[];
+  wishUsers?: string[];
 }
 
 interface GroceryCardProps {
@@ -62,6 +66,8 @@ interface GroceryCardProps {
   onIncrease?: () => void;
   onDecrease?: () => void;
   rating?: number;
+  cartUsers?: string[];
+  wishUsers?: string[];
 }
 const commentsData = [
   {
@@ -102,6 +108,8 @@ const Product: React.FC<GroceryCardProps> = ({
   categoryRef,
   addedToWishlist: initialAddedToWishlist,
   rating,
+  cartUsers,
+  wishUsers,
 }) => {
   const [productData, setProductData] = useState<Product | null>(null);
   const [quantities, setQuantities] = useState(1);
@@ -164,61 +172,63 @@ const Product: React.FC<GroceryCardProps> = ({
     }
   };
 
-  const addToCart = async () => {
-    if (user) {
-      if (!productId) return;
+  // Sync UI state when productData changes
+  useEffect(() => {
+    if (productData && user) {
+      setIsInCart(!!productData?.cartUsers?.includes(user?.email));
+    }
+  }, [productData, user]);
 
-      try {
-        // Fetch the product document
-        const productRef = doc(db, "products", productId);
-        const productSnap = await getDoc(productRef);
-
-        if (!productSnap.exists()) {
-          console.log("No such product document!");
-          return;
-        }
-
-        const productData = productSnap.data();
-        const isAlreadyInCart = productData.addedToCart; // Check the addedToCart status
-
-        if (isAlreadyInCart) {
-          // If already in cart, remove from cart collection
-          try {
-            await deleteDoc(doc(db, "cart", productId));
-            console.log("Product removed from cart:", productData.name);
-            setIsInCart(false);
-
-            // Update product's addedToCart field in Firestore
-            await updateDoc(productRef, { addedToCart: false });
-          } catch (error) {
-            console.error("Error removing from cart:", error);
-          }
-        } else {
-          // If not in cart, add it using the same product ID
-          try {
-            await setDoc(doc(db, "cart", productId), {
-              name: productData.name,
-              imageUrl: productData.imageUrl,
-              price: productData.price,
-              quantity: quantities,
-            });
-            console.log("Product added to cart:", productData.name);
-            setIsInCart(true);
-
-            // Update product's addedToCart field in Firestore
-            await updateDoc(productRef, { addedToCart: true });
-          } catch (error) {
-            console.error("Error adding to cart:", error);
-          }
-        }
-      } catch (error) {
-        console.error("Error fetching product:", error);
-      }
-    } else {
+  const addToCart = async (): Promise<void> => {
+    if (!user) {
       setNotAuthorized(true);
+      return;
+    }
+    if (!productId) return;
+
+    try {
+      const productRef = doc(db, "products", productId);
+      const productSnap = await getDoc(productRef);
+
+      if (!productSnap.exists()) {
+        console.log("No such product document!");
+        return;
+      }
+
+      const productData = productSnap.data() as Product;
+      const isAlreadyInCart = productData.cartUsers?.includes(user.email);
+
+      if (isAlreadyInCart) {
+        // Remove from cart
+        await deleteDoc(doc(db, "cart", productId));
+        await updateDoc(productRef, {
+          addedToCart: false,
+          cartUsers: arrayRemove(user.email),
+        });
+
+        console.log("Product removed from cart:", productData.name);
+        setIsInCart(false);
+      } else {
+        // Add to cart
+        await setDoc(doc(db, "cart", productId), {
+          name: productData.name,
+          imageUrl: productData.imageUrl,
+          price: productData.price,
+          usersMails: arrayUnion(user.email),
+        });
+
+        await updateDoc(productRef, {
+          addedToCart: true,
+          cartUsers: arrayUnion(user.email),
+        });
+
+        console.log("Product added to cart:", productData.name);
+        setIsInCart(true);
+      }
+    } catch (error) {
+      console.error("Error updating cart:", error);
     }
   };
-
   const addToWishlist = async () => {
     if (user) {
       if (!productId) return;
@@ -415,7 +425,7 @@ const Product: React.FC<GroceryCardProps> = ({
                     Add to Cart <ShoppingCartIcon />
                   </ButtonShape>
                 )}
-                {isInWishlist ? (
+                {user && productData?.wishUsers?.includes(user?.email) ? (
                   <FavoriteIcon
                     className="FavoriteBorderIcon"
                     style={{ color: Colors.Primary }}

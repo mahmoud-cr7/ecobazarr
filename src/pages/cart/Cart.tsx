@@ -63,8 +63,10 @@ const Cart: React.FC = () => {
     if (!user) return; // Ensure user is logged in before querying
 
     const cartCollection = collection(db, "cart");
-    const cartQuery = query(cartCollection, where("userId", "==", user.email)); // Filter by userId
-
+const cartQuery = query(
+  cartCollection,
+  where("usersMails", "array-contains", user.email)
+);
     const unsubscribe = onSnapshot(cartQuery, (snapshot) => {
       const cartData = snapshot.docs.map((doc) => ({
         id: doc.id,

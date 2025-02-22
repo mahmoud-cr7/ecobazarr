@@ -92,8 +92,10 @@ export default function Wishlist({ faVOpen, setFavOpen }: WishlistProps) {
   useEffect(() => {
     if (!user) return;
     const cartCollection = collection(db, "Wishlist");
-    const cartQuery = query(cartCollection, where("userId", "==", user.email)); // Filter by userId
-
+  const cartQuery = query(
+    cartCollection,
+    where("usersMails", "array-contains", user.email)
+  );
     const unsubscribe = onSnapshot(cartQuery, (snapshot) => {
       const cartData = snapshot.docs.map((doc) => ({
         id: doc.id,
