@@ -35,6 +35,8 @@ import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { Snackbar } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { arrayUnion, arrayRemove } from "firebase/firestore";
+import { useSelector } from "react-redux";
+import { RootState } from "../../store/store";
 
 interface Product {
   id: string;
@@ -93,6 +95,7 @@ const ProductCard: React.FC<GroceryCardProps> = ({
     initialAddedToWishlist || false
   );
   const navigate = useNavigate();
+  const darkMode = useSelector((state: RootState) => state.theme.darkMode);
 
   const handleClickOpen = () => {
     setOpenDialog(true);
@@ -100,9 +103,9 @@ const ProductCard: React.FC<GroceryCardProps> = ({
   const handleClose = () => {
     setOpenDialog(false);
   };
-  useEffect(() => {
-    setIsInCart(initialAddedToCart || false);
-  }, [initialAddedToCart]);
+  // useEffect(() => {
+  //   setIsInCart(initialAddedToCart || false);
+  // }, [initialAddedToCart]);
 
   useEffect(() => {
     const fetchProductData = async () => {
@@ -120,6 +123,7 @@ const ProductCard: React.FC<GroceryCardProps> = ({
 
     fetchProductData();
   }, [id]);
+
   useEffect(() => {
     const auth = getAuth(app);
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -135,150 +139,156 @@ const ProductCard: React.FC<GroceryCardProps> = ({
   const updateProductCartStatus = async (status: boolean) => {
     try {
       const productRef = doc(db, "products", id);
-      await updateDoc(productRef, { addedToCart: status });
+      if (user) {
+        await updateDoc(productRef, {
+          cartUsers: status ? arrayUnion(user.email) : arrayRemove(user.email),
+        });
+      }
     } catch (error) {
       console.error("Error updating product cart status:", error);
     }
   };
-
-const addToCart = async () => {
-  if (!user) {
-    setNotAuthorized(true);
-    return;
-  }
-
-  try {
-    const productRef = doc(db, "products", id);
-    const productSnap = await getDoc(productRef);
-
-    if (!productSnap.exists()) {
-      console.error("Product not found");
+  useEffect(() => {
+    if (user) {
+      setIsInCart(!!cartUsers?.includes(user?.email));
+    }
+  }, [user]);
+  const addToCart = async () => {
+    if (!user) {
+      setNotAuthorized(true);
       return;
     }
 
-    const cartUsers = productSnap.data().cartUsers || [];
-    const isUserInCartUsers = cartUsers.includes(user.email);
+    try {
+      const productRef = doc(db, "products", id);
+      const productSnap = await getDoc(productRef);
 
-    const cartQuery = await getDocs(collection(db, "cart"));
-    const cartItem = cartQuery.docs.find((doc) => doc.data().name === name);
-
-    if (cartItem) {
-      const updatedUsersMails = cartItem.data().usersMails.includes(user.email)
-        ? cartItem.data().usersMails.filter((email:string) => email !== user.email)
-        : [...cartItem.data().usersMails, user.email];
-
-      if (updatedUsersMails.length > 0) {
-        await updateDoc(doc(db, "cart", cartItem.id), {
-          usersMails: updatedUsersMails,
-        });
-      } else {
-        await deleteDoc(doc(db, "cart", cartItem.id));
+      if (!productSnap.exists()) {
+        console.error("Product not found");
+        return;
       }
 
-      await updateDoc(productRef, {
-        cartUsers: isUserInCartUsers
-          ? arrayRemove(user.email)
-          : arrayUnion(user.email),
-      });
+      const cartRef = doc(db, "cart", id); // Use the same product ID for the cart
+      const cartSnap = await getDoc(cartRef);
 
-      // **Update UI immediately**
-      setIsInCart(!isUserInCartUsers);
-      updateProductCartStatus(!isUserInCartUsers);
-    } else {
-      await updateDoc(productRef, {
-        cartUsers: arrayUnion(user.email),
-      });
-
-      await addDoc(collection(db, "cart"), {
-        name,
-        imageUrl,
-        price,
-        quantity: quantities,
-        usersMails: [user.email],
-      });
-
-      setIsInCart(true);
-      updateProductCartStatus(true);
-    }
-  } catch (error) {
-    console.error("Error updating cart:", error);
-  }
-};
-
-
-const addToWishlist = async () => {
-  if (!user) {
-    setNotAuthorized(true);
-    return;
-  }
-
-  if (!id) {
-    console.error("Product ID is missing!");
-    return;
-  }
-
-  try {
-    const productRef = doc(db, "products", id);
-    const productSnap = await getDoc(productRef);
-
-    if (!productSnap.exists()) {
-      console.log("No such product document!");
-      return;
-    }
-
-    const productData = productSnap.data();
-    const isAlreadyInWishlist = productData.wishUsers?.includes(user.email);
-    const wishlistRef = doc(db, "Wishlist", id);
-    const wishlistSnap = await getDoc(wishlistRef);
-
-    if (isAlreadyInWishlist) {
-      if (wishlistSnap.exists()) {
-        const wishlistData = wishlistSnap.data();
-        const updatedUsersMails = wishlistData.usersMails.filter(
-          (email: string) => email !== user.email
-        );
+      if (cartSnap.exists()) {
+        const updatedUsersMails = cartSnap
+          .data()
+          .usersMails.includes(user.email)
+          ? cartSnap
+              .data()
+              .usersMails.filter((email: string) => email !== user.email)
+          : [...cartSnap.data().usersMails, user.email];
 
         if (updatedUsersMails.length > 0) {
-          await updateDoc(wishlistRef, { usersMails: updatedUsersMails });
+          await updateDoc(cartRef, { usersMails: updatedUsersMails });
         } else {
-          await deleteDoc(wishlistRef);
+          await deleteDoc(cartRef); // Remove cart item if no users remain
         }
-      }
 
-      console.log("Product removed from wishlist:", productData.name);
-      setIsInWishlist(false);
-
-      await updateDoc(productRef, {
-        addedToWishlist: false,
-        wishUsers: arrayRemove(user.email),
-      });
-    } else {
-      if (wishlistSnap.exists()) {
-        await updateDoc(wishlistRef, {
-          usersMails: arrayUnion(user.email),
+        await updateDoc(productRef, {
+          cartUsers:
+            updatedUsersMails.length > 0
+              ? arrayUnion(user.email)
+              : arrayRemove(user.email),
         });
+
+        setIsInCart(updatedUsersMails.includes(user.email));
+        updateProductCartStatus(updatedUsersMails.includes(user.email));
       } else {
-        await setDoc(wishlistRef, {
-          name: productData.name,
-          imageUrl: productData.imageUrl,
-          price: productData.price,
+        await updateDoc(productRef, {
+          cartUsers: arrayUnion(user.email),
+        });
+
+        await setDoc(cartRef, {
+          name,
+          imageUrl,
+          price,
           quantity: quantities,
           usersMails: [user.email],
         });
+
+        setIsInCart(true);
+        updateProductCartStatus(true);
+      }
+    } catch (error) {
+      console.error("Error updating cart:", error);
+    }
+  };
+
+  const addToWishlist = async () => {
+    if (!user) {
+      setNotAuthorized(true);
+      return;
+    }
+
+    if (!id) {
+      console.error("Product ID is missing!");
+      return;
+    }
+
+    try {
+      const productRef = doc(db, "products", id);
+      const productSnap = await getDoc(productRef);
+
+      if (!productSnap.exists()) {
+        console.log("No such product document!");
+        return;
       }
 
-      console.log("Product added to wishlist:", productData.name);
-      setIsInWishlist(true);
+      const productData = productSnap.data();
+      const isAlreadyInWishlist = productData.wishUsers?.includes(user.email);
+      const wishlistRef = doc(db, "Wishlist", id);
+      const wishlistSnap = await getDoc(wishlistRef);
 
-      await updateDoc(productRef, {
-        addedToWishlist: true,
-        wishUsers: arrayUnion(user.email),
-      });
+      if (isAlreadyInWishlist) {
+        if (wishlistSnap.exists()) {
+          const wishlistData = wishlistSnap.data();
+          const updatedUsersMails = wishlistData.usersMails.filter(
+            (email: string) => email !== user.email
+          );
+
+          if (updatedUsersMails.length > 0) {
+            await updateDoc(wishlistRef, { usersMails: updatedUsersMails });
+          } else {
+            await deleteDoc(wishlistRef);
+          }
+        }
+
+        console.log("Product removed from wishlist:", productData.name);
+        setIsInWishlist(false);
+
+        await updateDoc(productRef, {
+          addedToWishlist: false,
+          wishUsers: arrayRemove(user.email),
+        });
+      } else {
+        if (wishlistSnap.exists()) {
+          await updateDoc(wishlistRef, {
+            usersMails: arrayUnion(user.email),
+          });
+        } else {
+          await setDoc(wishlistRef, {
+            name: productData.name,
+            imageUrl: productData.imageUrl,
+            price: productData.price,
+            quantity: quantities,
+            usersMails: [user.email],
+          });
+        }
+
+        console.log("Product added to wishlist:", productData.name);
+        setIsInWishlist(true);
+
+        await updateDoc(productRef, {
+          addedToWishlist: true,
+          wishUsers: arrayUnion(user.email),
+        });
+      }
+    } catch (error) {
+      console.error("Error updating wishlist:", error);
     }
-  } catch (error) {
-    console.error("Error updating wishlist:", error);
-  }
-};
+  };
 
   const increaseQuantity = () => {
     setQuantities((prev) => prev + 1);
@@ -305,7 +315,13 @@ const addToWishlist = async () => {
           },
         }}
       />
-      <div className="product-card">
+      <div
+        style={{
+          backgroundColor: darkMode ? Colors.Gray8 : "",
+          borderColor: darkMode ? Colors.Gray7 : "",
+        }}
+        className="product-card"
+      >
         <img src={imageUrl} alt={name} className="image" />
         <div className="favorite-icon">
           {user && wishUsers?.includes(user.email) ? (
@@ -317,14 +333,14 @@ const addToWishlist = async () => {
           ) : (
             <FavoriteBorderIcon
               className="favorite"
-              style={{ color: "inherit" }}
+              style={{ color: Colors.Gray3 }}
               onClick={addToWishlist}
             />
           )}
         </div>
         <h3
           className="name"
-          style={{ color: Colors.Gray7 }}
+          style={{ color: darkMode ? Colors.Gray1 : Colors.Gray7 }}
           onClick={handleClickOpen}
         >
           {name.length > 20 ? name.slice(0, 20) + "..." : name}
@@ -356,7 +372,14 @@ const addToWishlist = async () => {
         maxWidth="lg"
         fullWidth
       >
-        <DialogTitle sx={{ m: 0, p: 2 }} id="customized-dialog-title">
+        <DialogTitle
+          style={{
+            backgroundColor: darkMode ? Colors.Gray8 : "",
+            color: darkMode ? Colors.Gray1 : Colors.Gray9,
+          }}
+          sx={{ m: 0, p: 2 }}
+          id="customized-dialog-title"
+        >
           Product Details
         </DialogTitle>
         <IconButton
@@ -371,8 +394,18 @@ const addToWishlist = async () => {
         >
           <CloseIcon />
         </IconButton>
-        <DialogContent dividers>
-          <div className="product-details">
+        <DialogContent
+          dividers
+          style={{
+            backgroundColor: darkMode ? Colors.Gray8 : "",
+          }}
+        >
+          <div
+            style={{
+              backgroundColor: darkMode ? Colors.Gray8 : "",
+            }}
+            className="product-details"
+          >
             <div className="product-main">
               <div className="product-images">
                 <img src={sideBarImg[0]} alt={name} className="image" />
@@ -391,7 +424,11 @@ const addToWishlist = async () => {
                 </div>
               </div>
               <div className="product-info">
-                <h1 className="name" onClick={() => navigate(`/product/${id}`)}>
+                <h1
+                  style={{ color: darkMode ? Colors.Gray1 : Colors.Gray7 }}
+                  className="name"
+                  onClick={() => navigate(`/product/${id}`)}
+                >
                   {name} <span className="stock">In Stock</span>
                 </h1>
                 <div className="main-details">
@@ -406,7 +443,12 @@ const addToWishlist = async () => {
                         className="star"
                       />
                     </div>
-                    <p className="review">4 Review</p>
+                    <p
+                      style={{ color: darkMode ? Colors.Gray1 : Colors.Gray7 }}
+                      className="review"
+                    >
+                      4 Review
+                    </p>
                   </div>
                   <p className="sku">
                     <span>SKU:</span>2,51,594
@@ -421,7 +463,12 @@ const addToWishlist = async () => {
                     50% off
                   </p>
                 </div>
-                <div className="brand">
+                <div
+                  style={{
+                    color: darkMode ? Colors.Gray1 : Colors.Gray8,
+                  }}
+                  className="brand"
+                >
                   <p>Brand: {categoryRef}</p>
                   <div className="social-icons">
                     <FacebookIcon
@@ -439,7 +486,11 @@ const addToWishlist = async () => {
                     <XIcon className="icon" style={{ color: Colors.Gray6 }} />
                   </div>
                 </div>
-                <p className="description">
+                <p
+                style={{
+                  color: darkMode ? Colors.Gray2 : Colors.Gray8
+                }}
+                className="description">
                   Class aptent taciti sociosqu ad litora torquent per conubia
                   nostra, per inceptos himenaeos. Nulla nibh diam, blandit vel
                   consequat nec, ultrices et ipsum. Nulla varius magna a
@@ -450,7 +501,13 @@ const addToWishlist = async () => {
                     <span className="minus" onClick={decreaseQuantity}>
                       -
                     </span>
-                    <span>{quantities}</span>
+                    <span
+                      style={{
+                        color: darkMode ? Colors.Gray1 : Colors.Gray8,
+                      }}
+                    >
+                      {quantities}
+                    </span>
                     <span className="plus" onClick={increaseQuantity}>
                       +
                     </span>

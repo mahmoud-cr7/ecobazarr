@@ -118,7 +118,7 @@
 .service img {
   width: 35px;
   height: 35px;
-  border: 1px solid #fff;
+  /* border: 1px solid #fff; */
 }
 .service h3 {
   font-size: 18px;
@@ -253,6 +253,10 @@
   border-radius: 8px;
   overflow: hidden;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding-bottom: 10px;
+}
+.leatest-news .news .read-more{
+  margin-inline-start: 10px;
 }
 .leatest-news .news:hover {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);

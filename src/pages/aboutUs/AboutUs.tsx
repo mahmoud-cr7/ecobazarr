@@ -16,6 +16,8 @@ import shop_icon from "../../assets/shop_icon.png";
 import lief from "../../assets/lief.png";
 import stars from "../../assets/stars.png";
 import cat1 from "../../assets/cat1.jpeg";
+import { useSelector } from "react-redux";
+import { RootState } from "../../store/store";
 
 interface AboutUsProps {
   // Define your props here
@@ -54,13 +56,23 @@ const AboutUs: React.FC<AboutUsProps> = (props) => {
       description: "100% healthy & fresh food.",
     },
   ];
+  const darkMode = useSelector((state: RootState) => state.theme.darkMode);
+
   return (
     <>
       <div className="container">
         <div className="about-section-1">
           <div className="about-text">
-            <h1 className="about-title">100% Trusted Organic Food Store</h1>
-            <p className="about-description">
+            <h1
+              style={{ color: darkMode ? Colors.Gray1 : Colors.Gray9 }}
+              className="about-title"
+            >
+              100% Trusted Organic Food Store
+            </h1>
+            <p
+              style={{ color: darkMode ? Colors.Gray6 : Colors.Gray7 }}
+              className="about-description"
+            >
               Morbi porttitor ligula in nunc varius sagittis. Proin dui nisi,
               laoreet ut tempor ac, cursus vitae eros. Cras quis ultricies elit.
               Proin ac lectus arcu. Maecenas aliquet vel tellus at accumsan.
@@ -106,24 +118,29 @@ const AboutUs: React.FC<AboutUsProps> = (props) => {
       <div className="container">
         <div className="delivery">
           <div className="delivery-text">
-            <h1>We Delivered, You Enjoy Your Order.</h1>
-            <p>
+            <h1 style={{ color: darkMode ? Colors.Gray1 : Colors.Gray9 }}>
+              We Delivered, You Enjoy Your Order.
+            </h1>
+            <p style={{ color: darkMode ? Colors.Gray5 : Colors.Gray6 }}>
               Ut suscipit egestas suscipit. Sed posuere pellentesque nunc,
               ultrices consectetur velit dapibus eu. Mauris sollicitudin
               dignissim diam, ac mattis eros accumsan rhoncus. Curabitur auctor
               bibendum nunc eget elementum.
             </p>
-            <ul className="delivery-list">
-              <li style={{ color: Colors.Gray6 }}>
+            <ul
+              style={{ color: darkMode ? Colors.Gray6 : Colors.Gray6 }}
+              className="delivery-list"
+            >
+              <li >
                 <CheckIcon className="check" />
                 Sed in metus pellentesque.
               </li>
-              <li style={{ color: Colors.Gray6 }}>
+              <li >
                 <CheckIcon className="check" />
                 Fusce et ex commodo, aliquam nulla efficitur, tempus lorem.
               </li>
 
-              <li style={{ color: Colors.Gray6 }}>
+              <li >
                 <CheckIcon className="check" />
                 Maecenas ut nunc fringilla erat varius.
               </li>

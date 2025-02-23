@@ -141,7 +141,7 @@ const Product: React.FC<GroceryCardProps> = ({
     return () => unsubscribe();
   }, []);
   useEffect(() => {
-    const fetchBlog = async () => {
+    const fetchProduct = async () => {
       if (!productId) return;
 
       try {
@@ -160,7 +160,7 @@ const Product: React.FC<GroceryCardProps> = ({
       }
     };
 
-    fetchBlog();
+    fetchProduct();
   }, [productId]);
   const increaseQuantity = () => {
     setQuantities((prev) => prev + 1);
@@ -178,57 +178,84 @@ const Product: React.FC<GroceryCardProps> = ({
       setIsInCart(!!productData?.cartUsers?.includes(user?.email));
     }
   }, [productData, user]);
-
-  const addToCart = async (): Promise<void> => {
+  const updateProductCartStatus = async (status: boolean) => {
+    try {
+      const productRef = doc(db, "products", id);
+      await updateDoc(productRef, { addedToCart: status });
+    } catch (error) {
+      console.error("Error updating product cart status:", error);
+    }
+  };
+  const addToCart = async () => {
     if (!user) {
       setNotAuthorized(true);
       return;
     }
-    if (!productId) return;
 
     try {
+      if (!productId) {
+        console.error("Product ID is undefined");
+        return;
+      }
+
       const productRef = doc(db, "products", productId);
       const productSnap = await getDoc(productRef);
 
       if (!productSnap.exists()) {
-        console.log("No such product document!");
+        console.error("Product not found");
         return;
       }
 
-      const productData = productSnap.data() as Product;
-      const isAlreadyInCart = productData.cartUsers?.includes(user.email);
+      const cartRef = doc(db, "cart", productId); // Use the same product ID for the cart document
+      const cartSnap = await getDoc(cartRef);
 
-      if (isAlreadyInCart) {
-        // Remove from cart
-        await deleteDoc(doc(db, "cart", productId));
+      if (cartSnap.exists()) {
+        // User is toggling their cart status
+        const updatedUsersMails = cartSnap
+          .data()
+          .usersMails.includes(user.email)
+          ? cartSnap
+              .data()
+              .usersMails.filter((email: string) => email !== user.email)
+          : [...cartSnap.data().usersMails, user.email];
+
+        if (updatedUsersMails.length > 0) {
+          await updateDoc(cartRef, { usersMails: updatedUsersMails });
+        } else {
+          await deleteDoc(cartRef); // Remove cart item if no users remain
+        }
+
         await updateDoc(productRef, {
-          addedToCart: false,
-          cartUsers: arrayRemove(user.email),
+          cartUsers:
+            updatedUsersMails.length > 0
+              ? arrayUnion(user.email)
+              : arrayRemove(user.email),
         });
 
-        console.log("Product removed from cart:", productData.name);
-        setIsInCart(false);
+        setIsInCart(updatedUsersMails.includes(user.email));
+        updateProductCartStatus(updatedUsersMails.includes(user.email));
       } else {
-        // Add to cart
-        await setDoc(doc(db, "cart", productId), {
-          name: productData.name,
-          imageUrl: productData.imageUrl,
-          price: productData.price,
-          usersMails: arrayUnion(user.email),
-        });
-
+        // Product is not in cart yet, add it
         await updateDoc(productRef, {
-          addedToCart: true,
           cartUsers: arrayUnion(user.email),
         });
 
-        console.log("Product added to cart:", productData.name);
+        await setDoc(cartRef, {
+          name: productData?.name,
+          imageUrl: productData?.imageUrl,
+          price: productData?.price,
+          quantity: quantities,
+          usersMails: [user.email],
+        });
+
         setIsInCart(true);
+        updateProductCartStatus(true);
       }
     } catch (error) {
       console.error("Error updating cart:", error);
     }
   };
+
   const addToWishlist = async () => {
     if (user) {
       if (!productId) return;

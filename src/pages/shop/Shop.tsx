@@ -6,6 +6,8 @@ import ButtonShape from "../../components/button/Button";
 import { getFirestore, collection, getDocs, addDoc } from "firebase/firestore";
 import ProductCard from "../../components/productCard/ProductCard";
 import "./shop.css";
+import { useSelector } from "react-redux";
+import { RootState } from "../../store/store";
 const db = getFirestore();
 
 interface ShopProps {}
@@ -36,6 +38,7 @@ const Shop: React.FC<ShopProps> = () => {
   const [selectedPriceRange, setSelectedPriceRange] = useState<string>("");
   const [selectedRating, setSelectedRating] = useState<number | null>(null);
   const [sortOrder, setSortOrder] = useState<string>("");
+  const darkMode = useSelector((state: RootState) => state.theme.darkMode);
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -126,6 +129,7 @@ const Shop: React.FC<ShopProps> = () => {
         <div className="selectors">
           <div>
             <select
+              style={{ backgroundColor: darkMode ? Colors.Gray8 : "" }}
               className="selector"
               onChange={(e) => setSelectedCategory(e.target.value)}
             >
@@ -138,6 +142,7 @@ const Shop: React.FC<ShopProps> = () => {
             </select>
 
             <select
+              style={{ backgroundColor: darkMode ? Colors.Gray8 : "" }}
               className="selector"
               onChange={(e) => setSelectedPriceRange(e.target.value)}
             >
@@ -149,6 +154,7 @@ const Shop: React.FC<ShopProps> = () => {
 
             <select
               className="selector"
+              style={{ backgroundColor: darkMode ? Colors.Gray8 : "" }}
               onChange={(e) => setSelectedRating(Number(e.target.value))}
             >
               <option value="">Select Rating</option>
@@ -163,6 +169,7 @@ const Shop: React.FC<ShopProps> = () => {
           <div className="second-selectors">
             <select
               className="selector"
+              style={{ backgroundColor: darkMode ? Colors.Gray8 : "" }}
               onChange={(e) => setSortOrder(e.target.value)}
             >
               <option value="">Sort by Price</option>

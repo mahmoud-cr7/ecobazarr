@@ -20,12 +20,12 @@
   line-height: 1.5;
   padding-block: 20px;
 }
-.contact-us-info .contact-us-info-header:nth-last-of-type(2){
-    border-block: 1px solid #ccc;
+.contact-us-info .contact-us-info-header:nth-last-of-type(2) {
+  border-block: 1px solid #ccc;
 }
-.icon{
-    font-size: 30px;
-    margin-right: 10px;
+.icon {
+  font-size: 30px;
+  margin-right: 10px;
 }
 
 .contact-us-info div p {

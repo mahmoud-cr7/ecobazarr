@@ -5,6 +5,8 @@ import ButtonShape from "../button/Button";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import "./cardsContainer.css";
 import Colors from "../../utils/Colors";
+import { useSelector } from "react-redux";
+import { RootState } from "../../store/store";
 interface CardsContainerProps {
   children: React.ReactNode;
   header: string;
@@ -16,10 +18,14 @@ const CardsContainer: React.FC<CardsContainerProps> = ({
   header,
   onClick,
 }: CardsContainerProps) => {
+    const darkMode = useSelector((state: RootState) => state.theme.darkMode);
+
   return (
     <div className="cards-container">
       <div className="header">
-        <h1 style={{ color: Colors.Gray9 }}>{header}</h1>
+        <h1 style={{ color: darkMode ? Colors.Gray1 : Colors.Gray9 }}>
+          {header}
+        </h1>
         <ButtonShape height="50px" textColor={Colors.Primary} onClick={onClick}>
           View All
           <ArrowForwardIcon />

@@ -27,6 +27,8 @@ import Stack from "@mui/material/Stack";
 import StarIcon from "@mui/icons-material/Star";
 import user from "../../assets/user.png";
 import Newsletter from "../../components/newsletter/Newsletter";
+import { useSelector } from "react-redux";
+import { RootState } from "../../store/store";
 interface HomeProps {
   // Define your props here
   newsletterOpen: boolean;
@@ -54,7 +56,9 @@ const shippingServices = {
   },
 };
 
-const Home: React.FC<HomeProps> = ({ newsletterOpen } = { newsletterOpen: false } ) => {
+const Home: React.FC<HomeProps> = (
+  { newsletterOpen } = { newsletterOpen: false }
+) => {
   const [timeLeft, setTimeLeft] = useState(20 * 24 * 60 * 60); // 20 days in seconds
   // useEffect(() => {
   //   if (timeLeft === 0) return; // Stop the timer when it reaches 0
@@ -178,6 +182,7 @@ const Home: React.FC<HomeProps> = ({ newsletterOpen } = { newsletterOpen: false 
     Object.keys(testimonials).length / ITEMS_PER_PAGE
   );
   const testimonialsArray = Object.values(testimonials);
+  const darkMode = useSelector((state: RootState) => state.theme.darkMode);
 
   const handleChange = (_: React.ChangeEvent<unknown>, value: number) => {
     setPage(value);
@@ -187,7 +192,15 @@ const Home: React.FC<HomeProps> = ({ newsletterOpen } = { newsletterOpen: false 
     (page - 1) * ITEMS_PER_PAGE,
     page * ITEMS_PER_PAGE
   );
-  const ArrowBack = <ArrowBackIcon style={{color:Colors.White , backgroundColor:Colors.Primary ,borderRadius:"50%"}} />;
+  const ArrowBack = (
+    <ArrowBackIcon
+      style={{
+        color: Colors.White,
+        backgroundColor: Colors.Primary,
+        borderRadius: "50%",
+      }}
+    />
+  );
   const ArrowForward = (
     <ArrowForwardIcon
       style={{
@@ -216,7 +229,7 @@ const Home: React.FC<HomeProps> = ({ newsletterOpen } = { newsletterOpen: false 
           <ButtonShape
             width="200px"
             height="50px"
-            backgroundColor={Colors.White}
+            backgroundColor={darkMode ? Colors.Gray7 : Colors.White}
             textColor={Colors.Primary}
           >
             Shop Now <ArrowForwardIcon />
@@ -237,7 +250,7 @@ const Home: React.FC<HomeProps> = ({ newsletterOpen } = { newsletterOpen: false 
             <ButtonShape
               width="200px"
               height="50px"
-              backgroundColor={Colors.White}
+              backgroundColor={darkMode ? Colors.Gray7 : Colors.White}
               textColor={Colors.Primary}
             >
               Shop Now <ArrowForwardIcon />
@@ -246,7 +259,10 @@ const Home: React.FC<HomeProps> = ({ newsletterOpen } = { newsletterOpen: false 
         </div>
       </div>
       <div className="container">
-        <div className="services ">
+        <div
+          style={{ backgroundColor: darkMode ? Colors.Gray8 : "" }}
+          className="services "
+        >
           {Object.keys(shippingServices).map((key) => {
             const service =
               shippingServices[key as keyof typeof shippingServices];
@@ -255,7 +271,9 @@ const Home: React.FC<HomeProps> = ({ newsletterOpen } = { newsletterOpen: false 
                 <img src={service.icon} alt={key} />
                 <div>
                   <h3>{service.title}</h3>
-                  <p style={{ color: Colors.Gray6 }}>{service.description}</p>
+                  <p style={{ color: darkMode ? Colors.Gray4 : Colors.Gray6 }}>
+                    {service.description}
+                  </p>
                 </div>
               </div>
             );
@@ -286,7 +304,9 @@ const Home: React.FC<HomeProps> = ({ newsletterOpen } = { newsletterOpen: false 
         <div className="offers">
           <div className="sale sale-1">
             <p style={{ color: Colors.Gray9 }}>Best Deals</p>
-            <h1>Sale of the Month</h1>
+            <h1 style={{ color: darkMode ? Colors.Gray9 : Colors.Gray9 }}>
+              Sale of the Month
+            </h1>
             <div>
               <div className="countdown-timer">
                 <div className="time-section">
@@ -328,7 +348,7 @@ const Home: React.FC<HomeProps> = ({ newsletterOpen } = { newsletterOpen: false 
             <ButtonShape
               width="200px"
               height="50px"
-              backgroundColor={Colors.White}
+              backgroundColor={darkMode ? Colors.Gray7 : Colors.White}
               textColor={Colors.Primary}
             >
               Shop Now <ArrowForwardIcon />
@@ -380,17 +400,26 @@ const Home: React.FC<HomeProps> = ({ newsletterOpen } = { newsletterOpen: false 
         </div>
       </div>
       <div className="container">
-        <h1 style={{ color: Colors.Gray9 }} className="section-header">
-          Leatest Newss
+        <h1
+          style={{ color: darkMode ? Colors.Gray1 : Colors.Gray9 }}
+          className="section-header"
+        >
+          Leatest News
         </h1>
         <div className="leatest-news">
           {Object.keys(news).map((indx) => {
             const newBody = news[indx as keyof typeof news];
             return (
-              <div className="news" key={indx}>
+              <div
+                style={{ backgroundColor: darkMode ? Colors.Gray8 : "" }}
+                className="news"
+                key={indx}
+              >
                 <div className="news-img" key={indx}>
                   <img src={newBody.image} alt="news" />
-                  <p className="date">
+                  <p
+                  style={{ color: darkMode ? Colors.Gray9 : Colors.Gray9 }}
+                  className="date">
                     {newBody.date[0]} <span>{newBody.date[1]}</span>
                   </p>
                 </div>
@@ -412,8 +441,9 @@ const Home: React.FC<HomeProps> = ({ newsletterOpen } = { newsletterOpen: false 
                 <ButtonShape
                   width="150px"
                   height="50px"
-                  backgroundColor={Colors.White}
+                  backgroundColor={darkMode ? Colors.Gray7 : Colors.Gray0_5}
                   textColor={Colors.Primary}
+                  className="read-more"
                 >
                   Read More <ArrowForwardIcon />
                 </ButtonShape>
@@ -424,15 +454,19 @@ const Home: React.FC<HomeProps> = ({ newsletterOpen } = { newsletterOpen: false 
       </div>
       <div
         className="pb-3 pt-3 mt-3"
-        style={{ backgroundColor: Colors.Gray0_5 }}
+        style={{ backgroundColor: darkMode ? Colors.Gray8 : Colors.Gray0_5 }}
       >
         <div className="container">
-          <h1 style={{ color: Colors.Gray9 }} className="section-header">
+          <h1 style={{ color: darkMode ? Colors.Gray1 : Colors.Gray9 }} className="section-header">
             Testimonials
           </h1>
-          <div className="testimonials">
+          <div
+            className="testimonials"
+          >
             {paginatedTestimonials.map((testimonial, indx) => (
-              <div className="testimonial" key={indx}>
+              <div
+              style={{ backgroundColor: darkMode ? Colors.Gray7 : "" }}
+              className="testimonial" key={indx}>
                 <div className="testimonial-header">
                   <FormatQuoteIcon
                     style={{ color: Colors.Primary }}
@@ -481,7 +515,7 @@ const Home: React.FC<HomeProps> = ({ newsletterOpen } = { newsletterOpen: false 
           </Stack>
         </div>
       </div>
-      <Newsletter newsletterOpen={newsletterOpen}  />
+      <Newsletter newsletterOpen={newsletterOpen} />
     </>
   );
 };

@@ -21,6 +21,8 @@ import ChatBubbleIcon from "@mui/icons-material/ChatBubble";
 import Blog from "../blog/Blog";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { RootState } from "../../store/store";
 interface BlogsProps {
   // Define your props here
 }
@@ -154,6 +156,8 @@ const Blogs: React.FC<BlogsProps> = (props) => {
   const [activeTag, setActiveTag] = useState<number | null>(null);
   const [arange, setArrange] = useState<string>("newest");
   const navigate = useNavigate();
+  const darkMode = useSelector((state: RootState) => state.theme.darkMode);
+
   useEffect(() => {
     const fetchBlogs = async () => {
       try {
@@ -208,11 +212,11 @@ const Blogs: React.FC<BlogsProps> = (props) => {
           (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
         )
       );
-        setBlogs((prev) =>
-            [...prev].sort(
-            (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
-            )
-        );
+      setBlogs((prev) =>
+        [...prev].sort(
+          (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
+        )
+      );
     }
   };
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -221,22 +225,29 @@ const Blogs: React.FC<BlogsProps> = (props) => {
       blog.description.toLowerCase().includes(query)
     );
     setFilteredBlogs(filtered);
-    };
-    const handleReadMore = (blog: BlogInterface) => {
-      navigate(`/blog/${blog.id}`);
-    };
+  };
+  const handleReadMore = (blog: BlogInterface) => {
+    navigate(`/blog/${blog.id}`);
+  };
   return (
     <div className="container">
       <div className="blogs">
         <div className="sideBar-filerts">
           <div className="search">
-            <input type="text" placeholder="Search" className="search-input" onChange={handleSearch} />
+            <input
+              type="text"
+              placeholder="Search"
+              className="search-input"
+              onChange={handleSearch}
+            />
           </div>
           <div className="categories">
             <h1 className="categories-header">Top Categories</h1>
             {categories.map((category) => (
               <div className="category-item" key={category.id}>
-                <p style={{ color: Colors.Gray9 }}>{category.name}</p>
+                <p style={{ color: darkMode ? Colors.White : Colors.Gray9 }}>
+                  {category.name}
+                </p>
                 <p style={{ color: Colors.Gray5 }}>({category.number})</p>
               </div>
             ))}
@@ -274,6 +285,7 @@ const Blogs: React.FC<BlogsProps> = (props) => {
             <div className="sort-content">
               <p>Sort by:</p>
               <select
+                style={{ backgroundColor: darkMode ? Colors.Gray8 : "" }}
                 name="sort"
                 id="sort"
                 className="sort-select"
@@ -295,9 +307,16 @@ const Blogs: React.FC<BlogsProps> = (props) => {
                 <div className="news" key={indx}>
                   <div className="news-img">
                     <img src={blog.imageUrl} alt="news" />
-                    <p className="date">
+                    <p
+                      style={{ color: darkMode ? Colors.Gray9 : Colors.Gray9 }}
+                      className="date"
+                    >
                       {blog.date.split("-")[2]}{" "}
-                      <span>
+                      <span
+                        style={{
+                          color: darkMode ? Colors.Gray9 : Colors.Gray9,
+                        }}
+                      >
                         {monthNames[parseInt(blog.date.split("-")[1], 10) - 1]}
                       </span>
                     </p>
@@ -320,9 +339,10 @@ const Blogs: React.FC<BlogsProps> = (props) => {
                   <ButtonShape
                     width="150px"
                     height="50px"
-                    backgroundColor={Colors.White}
+                    backgroundColor={darkMode ? Colors.Gray8 : Colors.Gray0_5}
                     textColor={Colors.Primary}
                     onClick={() => handleReadMore(blog)}
+                    className="read-more"
                   >
                     Read More <ArrowForwardIcon />
                   </ButtonShape>

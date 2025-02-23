@@ -165,4 +165,10 @@
   padding-block: 0.5rem;
   padding-inline: 15px;
   font-size: 20px;
+  height: 100px;
+  overflow: hidden;
 }
+.news .read-more {
+  margin-inline-start: 10px;
+  margin-block: 10px;
+} 
