@@ -1,50 +1,68 @@
-# React + TypeScript + Vite
+# ECOBAZAR 🌿
+A modern grocery shopping experience built with **React**, **TypeScript**, and **Firebase**.
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Overview
+ECOBAZAR is a feature-rich e-commerce platform designed to provide a seamless grocery shopping experience. The application offers real-time data updates, secure payments, and efficient state management to ensure a smooth and responsive user journey.
 
-Currently, two official plugins are available:
+## Tech Stack
+- **Frontend:** React, TypeScript, Vite
+- **State Management:** Redux Toolkit
+- **Backend & Database:** Firebase (Authentication, Firestore, Hosting)
+- **Styling:** Tailwind CSS
+- **Build Tool:** Vite
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Features
+- **Intuitive UI:** Modern, responsive design for smooth navigation.
+- **Shopping Cart & Wishlist:** Easily add, remove, and manage products.
+- **Secure Authentication:** Firebase authentication with email/password and Google login.
+- **Real-time Updates:** Live data synchronization for inventory and order tracking.
+- **Optimized Performance:** Fast page loads with efficient state management using Redux Toolkit.
+- **Secure Payments:** Integrated payment gateway for a safe checkout process.
 
-## Expanding the ESLint configuration
+## Getting Started
+### Installation
+1. Clone the repository:
+   ```sh
+   git clone https://github.com/yourusername/ecobazar.git
+   cd ecobazar
+2. Install dependencies:
+   ```sh
+   npm install
+3. Start the development server:
+   ```sh
+   npm run dev
+4.Open http://localhost:5173 in your browser.
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+ESLint & Code Quality
+ECOBAZAR follows strict ESLint rules to ensure maintainability and high code quality. For production-level development, update your ESLint configuration for type-aware linting.
 
-- Configure the top-level `parserOptions` property like this:
+Expanding ESLint Configuration
+If you're developing a production application, update your ESLint config as follows:
 
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
-
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
-
+1.Configure the top-level parserOptions:
 ```js
 // eslint.config.js
 import react from 'eslint-plugin-react'
 
 export default tseslint.config({
-  // Set the react version
   settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
+  plugins: { react },
   rules: {
-    // other rules...
-    // Enable its recommended rules
     ...react.configs.recommended.rules,
     ...react.configs['jsx-runtime'].rules,
   },
 })
 ```
+Deployment
+To deploy ECOBAZAR using Firebase Hosting:
+
+1.Build the project:
+```sh
+npm run build
+```
+2.Deploy to Firebase:
+```sh
+firebase deploy
+```
+Contributing
+Contributions are welcome! Please submit issues or pull requests to help improve the platform.
