@@ -1,4 +1,4 @@
-# ECOBAZAR 🛒🌿
+# ECOBAZAR 🌿
 A modern grocery shopping experience built with **React**, **TypeScript**, and **Firebase**.
 
 ## Overview
@@ -25,3 +25,19 @@ ECOBAZAR is a feature-rich e-commerce platform designed to provide a seamless gr
    ```sh
    git clone https://github.com/yourusername/ecobazar.git
    cd ecobazar
+2. Install dependencies:
+   ```sh
+   npm install
+3. Start the development server:
+   ```sh
+   npm run dev
+4.Open http://localhost:5173 in your browser.
+
+ESLint & Code Quality
+ECOBAZAR follows strict ESLint rules to ensure maintainability and high code quality. For production-level development, update your ESLint configuration for type-aware linting.
+
+Expanding ESLint Configuration
+If you're developing a production application, update your ESLint config as follows:
+
+1.Configure the top-level parserOptions:
+
