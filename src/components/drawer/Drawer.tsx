@@ -30,6 +30,10 @@ import { useEffect } from "react";
 import { onSnapshot } from "firebase/firestore";
 import { useState } from "react";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { useSelector } from "react-redux";
+import { RootState } from "../../store/store";
+import { dark } from "@mui/material/styles/createPalette";
+import { DarkMode } from "@mui/icons-material";
 // Define the Product interface
 interface Product {
   id: string;
@@ -51,24 +55,37 @@ const ProductItem: React.FC<{
   onIncrease: () => void;
   onDecrease: () => void;
 }> = ({ product, onIncrease, onDecrease }) => {
+  const darkMode = useSelector((state: RootState) => state.theme.darkMode);
 
   return (
     <ListItem disablePadding>
       <ListItemButton>
-        <img
+        {/* <img
           src={product.imageUrl}
           alt={product.name}
           style={{ width: 50, height: 50, marginRight: 16 }}
-        />
+        /> */}
         <ListItemText
+          style={{ color: darkMode ? Colors.White : Colors.Gray8 }}
           primary={product.name}
           secondary={`$${product.price.toFixed(2)}`}
+          secondaryTypographyProps={{
+            color: darkMode ? Colors.Gray3 : Colors.Gray8,
+          }}
         />
-        <IconButton onClick={onDecrease} aria-label="reduce quantity">
+        <IconButton
+          style={{ color: Colors.Primary }}
+          onClick={onDecrease}
+          aria-label="reduce quantity"
+        >
           <RemoveIcon />
         </IconButton>
         <span style={{ margin: "0 8px" }}>{product.quantity}</span>
-        <IconButton onClick={onIncrease} aria-label="increase quantity">
+        <IconButton
+          style={{ color: Colors.Primary }}
+          onClick={onIncrease}
+          aria-label="increase quantity"
+        >
           <AddIcon />
         </IconButton>
       </ListItemButton>
@@ -85,6 +102,7 @@ export default function TemporaryDrawer({
   const db = getFirestore(app);
   const [user, setUser] = useState<{ email: string } | null>(null);
   const [quantities, setQuantities] = useState<{ [key: string]: number }>({});
+  const darkMode = useSelector((state: RootState) => state.theme.darkMode);
 
   useEffect(() => {
     const auth = getAuth(app);
@@ -106,10 +124,10 @@ export default function TemporaryDrawer({
     if (!user) return; // Ensure user is logged in before querying
 
     const cartCollection = collection(db, "cart");
-const cartQuery = query(
-  cartCollection,
-  where("usersMails", "array-contains", user.email)
-);
+    const cartQuery = query(
+      cartCollection,
+      where("usersMails", "array-contains", user.email)
+    );
     const unsubscribe = onSnapshot(cartQuery, (snapshot) => {
       const cartData = snapshot.docs.map((doc) => ({
         id: doc.id,
@@ -176,7 +194,16 @@ const cartQuery = query(
   };
 
   const DrawerList = (
-    <Box sx={{ width: 350 }} role="presentation">
+    <Box
+      sx={{
+        width: 350,
+        backgroundColor: darkMode ? Colors.Gray8 : Colors.White,
+        height: "100vh",
+        padding: 2,
+        color: darkMode ? Colors.White : Colors.Gray8,
+      }}
+      role="presentation"
+    >
       <h1 className="menu-title">Cart</h1>
       <Divider />
       <List>
@@ -227,7 +254,7 @@ const cartQuery = query(
   );
 
   return (
-    <div>
+    <div style={{ backgroundColor: darkMode ? Colors.Gray8 : Colors.White }}>
       <Drawer anchor="right" open={open} onClose={toggleDrawer(false)}>
         {DrawerList}
       </Drawer>

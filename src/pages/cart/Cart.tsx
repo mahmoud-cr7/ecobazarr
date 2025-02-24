@@ -18,6 +18,8 @@ import Colors from "../../utils/Colors";
 import { useNavigate } from "react-router-dom";
 import { Snackbar } from "@mui/material";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { useSelector } from "react-redux";
+import { RootState } from "../../store/store";
 
 interface Product {
   id: string;
@@ -37,6 +39,7 @@ const Cart: React.FC = () => {
   const [couponInput, setCouponInput] = useState("");
   const [invalidCoupon, setInvalidCoupon] = useState(false);
   const [user, setUser] = useState<{ email: string } | null>(null);
+  const darkMode = useSelector((state: RootState) => state.theme.darkMode);
 
   const [Shipping, setShipping] = useState(10);
   const navigate = useNavigate();
@@ -63,10 +66,10 @@ const Cart: React.FC = () => {
     if (!user) return; // Ensure user is logged in before querying
 
     const cartCollection = collection(db, "cart");
-const cartQuery = query(
-  cartCollection,
-  where("usersMails", "array-contains", user.email)
-);
+    const cartQuery = query(
+      cartCollection,
+      where("usersMails", "array-contains", user.email)
+    );
     const unsubscribe = onSnapshot(cartQuery, (snapshot) => {
       const cartData = snapshot.docs.map((doc) => ({
         id: doc.id,
@@ -225,18 +228,60 @@ const cartQuery = query(
       />
       <div className="container">
         <div className="cart">
-          <h1 className="cart-title">My Shopping Cart</h1>
+          <h1
+            style={{
+              color: darkMode ? Colors.Gray1 : Colors.Gray9,
+            }}
+            className="cart-title"
+          >
+            My Shopping Cart
+          </h1>
           <div className="cart-container">
             <div className="cart-products">
               <div className="cart-table">
                 <table className="cart-items">
                   <thead className="cart-header">
                     <tr className="cart-header-row">
-                      <th className="cart-header-cell">Product</th>
-                      <th className="cart-header-cell">Price</th>
-                      <th className="cart-header-cell">Quantity</th>
-                      <th className="cart-header-cell">SubTotal</th>
-                      <th className="cart-header-cell">Remove</th>
+                      <th
+                        className="cart-header-cell"
+                        style={{
+                          color: darkMode ? Colors.Gray1 : Colors.Gray9,
+                        }}
+                      >
+                        Product
+                      </th>
+                      <th
+                        style={{
+                          color: darkMode ? Colors.Gray1 : Colors.Gray9,
+                        }}
+                        className="cart-header-cell"
+                      >
+                        Price
+                      </th>
+                      <th
+                        style={{
+                          color: darkMode ? Colors.Gray1 : Colors.Gray9,
+                        }}
+                        className="cart-header-cell"
+                      >
+                        Quantity
+                      </th>
+                      <th
+                        style={{
+                          color: darkMode ? Colors.Gray1 : Colors.Gray9,
+                        }}
+                        className="cart-header-cell"
+                      >
+                        SubTotal
+                      </th>
+                      <th
+                        style={{
+                          color: darkMode ? Colors.Gray1 : Colors.Gray9,
+                        }}
+                        className="cart-header-cell"
+                      >
+                        Remove
+                      </th>
                     </tr>
                   </thead>
                   <tbody className="cart-body">
@@ -334,7 +379,14 @@ const cartQuery = query(
             </div>
           </div>
           <div className="cart-total">
-            <h1 className="cart-total-title">Cart Total</h1>
+            <h1
+              style={{
+                color: darkMode ? Colors.Gray1 : Colors.Gray9,
+              }}
+              className="cart-total-title"
+            >
+              Cart Total
+            </h1>
             <div className="cart-total-items">
               <h1>SubTotal</h1>
               <h1>

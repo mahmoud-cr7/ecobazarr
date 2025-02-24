@@ -25,6 +25,8 @@ const Colors = {
   Gray7: "#4D4D4D",
   Gray8: "#333333",
   Gray9: "#1A1A1A",
+  dark: "#333",
+  darkGray: "#242729",
 };
 
 export default Colors;

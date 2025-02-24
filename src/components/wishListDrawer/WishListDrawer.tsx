@@ -30,6 +30,8 @@ import { onSnapshot } from "firebase/firestore";
 import "./wishListDrawer.css";
 import { useState } from "react";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { useSelector } from "react-redux";
+import { RootState } from "../../store/store";
 // Define the Product interface
 interface Product {
   id: string;
@@ -49,6 +51,8 @@ interface WishlistProps {
 const ProductItem: React.FC<{
   product: Product;
 }> = ({ product }) => {
+    const darkMode = useSelector((state: RootState) => state.theme.darkMode);
+  
   return (
     <ListItem disablePadding>
       <ListItemButton>
@@ -58,8 +62,12 @@ const ProductItem: React.FC<{
           style={{ width: 50, height: 50, marginRight: 16 }}
         />
         <ListItemText
+          style={{ color: darkMode ? Colors.White : Colors.Gray8 }}
           primary={product.name}
           secondary={`$${product.price.toFixed(2)}`}
+          secondaryTypographyProps={{
+            color: darkMode ? Colors.Gray3 : Colors.Gray8,
+          }}
         />
       </ListItemButton>
     </ListItem>
@@ -72,6 +80,7 @@ export default function Wishlist({ faVOpen, setFavOpen }: WishlistProps) {
   const db = getFirestore(app);
   const [user, setUser] = useState<{ email: string } | null>(null);
   const [quantities, setQuantities] = useState<{ [key: string]: number }>({});
+  const darkMode = useSelector((state: RootState) => state.theme.darkMode);
 
   useEffect(() => {
     const auth = getAuth(app);
@@ -119,7 +128,16 @@ export default function Wishlist({ faVOpen, setFavOpen }: WishlistProps) {
   };
 
   const DrawerList = (
-    <Box sx={{ width: 350 }} role="presentation">
+    <Box
+      sx={{
+        width: 350,
+        backgroundColor: darkMode ? Colors.Gray8 : Colors.White,
+        height: "100vh",
+        padding: 2,
+        color: darkMode ? Colors.White : Colors.Gray8,
+      }}
+      role="presentation"
+    >
       <h1 className="menu-title">Wishlist</h1>
       <Divider />
       <List>

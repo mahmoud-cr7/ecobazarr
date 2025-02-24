@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useState, useEffect } from "react";
 import {
   Checkbox,
@@ -12,6 +13,8 @@ import "./checkOut.css";
 import { getFirestore, collection, onSnapshot } from "firebase/firestore";
 import { app } from "../../firebase/Firebase";
 import ButtonShape from "../../components/button/Button";
+import { RootState } from "../../store/store";
+import { useSelector } from "react-redux";
 
 interface Product {
   id: string;
@@ -22,6 +25,8 @@ interface Product {
 }
 
 const ProductItem: React.FC<{ product: Product }> = ({ product }) => {
+  const darkMode = useSelector((state: RootState) => state.theme.darkMode);
+
   return (
     <ListItem disablePadding>
       <ListItemButton>
@@ -33,6 +38,9 @@ const ProductItem: React.FC<{ product: Product }> = ({ product }) => {
         <ListItemText
           primary={product.name}
           secondary={`X${product.quantity}`}
+          secondaryTypographyProps={{
+            color: darkMode ? Colors.Gray3 : Colors.Gray8,
+          }}
           style={{ display: "flex", alignItems: "center", gap: 8 }}
         />
         <span style={{ margin: "0 -13px" }}>{`$${(
@@ -121,12 +129,20 @@ const CheckOut: React.FC = () => {
   };
 
   const states = selectedCountry ? countryStates[selectedCountry] : [];
+  const darkMode = useSelector((state: RootState) => state.theme.darkMode);
 
   return (
     <div className="container">
       <div className="checkout">
         <div className="billing-info">
-          <h1 className="title">Billing Information</h1>
+          <h1
+            style={{
+              color: darkMode ? Colors.Gray1 : Colors.Gray9,
+            }}
+            className="title"
+          >
+            Billing Information
+          </h1>
           <div className="identity">
             <div className="input-div">
               <label htmlFor="name-input">First name</label>
@@ -169,6 +185,7 @@ const CheckOut: React.FC = () => {
             <div className="input-div">
               <label htmlFor="country-region">Country / Region:</label>
               <select
+                style={{ backgroundColor: darkMode ? Colors.darkGray : "" }}
                 id="country-region"
                 value={selectedCountry}
                 onChange={handleCountryChange}
@@ -188,6 +205,7 @@ const CheckOut: React.FC = () => {
                 id="state"
                 value={selectedState}
                 onChange={handleStateChange}
+                style={{ backgroundColor: darkMode ? Colors.darkGray : "" }}
               >
                 <option value="">Select a state</option>
                 {states.map((state) => (
@@ -256,7 +274,9 @@ const CheckOut: React.FC = () => {
               ))}
             </List>
             <div className="subtotal">
-              <h2 style={{ color: Colors.Gray7 }}>Subtotal: </h2>
+              <h2 style={{ color: darkMode ? Colors.Gray4 : Colors.Gray7 }}>
+                Subtotal:{" "}
+              </h2>
               <h2>
                 $
                 {cartItems
@@ -265,7 +285,9 @@ const CheckOut: React.FC = () => {
               </h2>
             </div>
             <div className="shipping">
-              <h2 style={{ color: Colors.Gray7 }}>Shipping:</h2>
+              <h2 style={{ color: darkMode ? Colors.Gray4 : Colors.Gray7 }}>
+                Shipping:
+              </h2>
               <h2>
                 {shippingType === "cash"
                   ? `$${calculateShippingCost().toFixed(2)}`
@@ -273,14 +295,18 @@ const CheckOut: React.FC = () => {
               </h2>
             </div>
             <div className="total">
-              <h2 style={{ color: Colors.Gray7 }}>Total:</h2>
+              <h2 style={{ color: darkMode ? Colors.Gray4 : Colors.Gray7 }}>
+                Total:
+              </h2>
               <h2 className="total-price">
                 ${calculateTotalCost().toFixed(2)}
               </h2>
             </div>
           </div>
           <div className="method">
-            <h1 style={{ color: Colors.Gray9 }}>Payment Method:</h1>
+            <h1 style={{ color: darkMode ? Colors.Gray1 : Colors.Gray9 }}>
+              Payment Method:
+            </h1>
             {paymentOptions.map((option) => (
               <div key={option.value}>
                 <label className="payment-label">

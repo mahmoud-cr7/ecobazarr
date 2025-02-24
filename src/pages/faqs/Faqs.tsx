@@ -9,6 +9,8 @@ import Colors from "../../utils/Colors";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { Pagination, PaginationItem, Stack } from "@mui/material";
+import { useSelector } from "react-redux";
+import { RootState } from "../../store/store";
 interface FaqsProps {}
 
 interface Faq {
@@ -20,8 +22,10 @@ interface Faq {
 const Faqs: React.FC<FaqsProps> = () => {
   const [faqs, setFaqs] = useState<Faq[]>([]);
   const [openFaqId, setOpenFaqId] = useState<string | null>(null);
- const ITEMS_PER_PAGE = 4;
+  const ITEMS_PER_PAGE = 4;
   const [page, setPage] = useState(1);
+  const darkMode = useSelector((state: RootState) => state.theme.darkMode);
+
   useEffect(() => {
     const fetchFAQs = async () => {
       try {
@@ -42,9 +46,7 @@ const Faqs: React.FC<FaqsProps> = () => {
   const toggleFaq = (id: string) => {
     setOpenFaqId(openFaqId === id ? null : id);
   };
-const totalPages = Math.ceil(
-    Object.keys(faqs).length / ITEMS_PER_PAGE
-  );
+  const totalPages = Math.ceil(Object.keys(faqs).length / ITEMS_PER_PAGE);
   const testimonialsArray = Object.values(faqs);
 
   const handleChange = (_: React.ChangeEvent<unknown>, value: number) => {
@@ -55,7 +57,15 @@ const totalPages = Math.ceil(
     (page - 1) * ITEMS_PER_PAGE,
     page * ITEMS_PER_PAGE
   );
-  const ArrowBack = <ArrowBackIcon style={{color:Colors.White , backgroundColor:Colors.Primary ,borderRadius:"50%"}} />;
+  const ArrowBack = (
+    <ArrowBackIcon
+      style={{
+        color: Colors.White,
+        backgroundColor: Colors.Primary,
+        borderRadius: "50%",
+      }}
+    />
+  );
   const ArrowForward = (
     <ArrowForwardIcon
       style={{
@@ -69,11 +79,17 @@ const totalPages = Math.ceil(
     <div className="container">
       <div className="faqs">
         <div className="content">
-          <h1 className="title">Welcome, Let’s Talk About Our Ecobazar</h1>
+          <h1
+            style={{ color: darkMode ? Colors.Gray1 : "" }}
+            className="title"
+          >
+            Welcome, Let’s Talk About Our Ecobazar
+          </h1>
           {paginatedFaqs.map((faq) => (
             <div
               key={faq.id}
               className={openFaqId === faq.id ? "faq-opened" : "faq"}
+              style={{ backgroundColor: darkMode ? Colors.Gray9 : "" }}
             >
               <div
                 className={
@@ -92,6 +108,7 @@ const totalPages = Math.ceil(
                       ? "toggle-button-opened"
                       : "toggle-button"
                   }
+                  style={{ backgroundColor: darkMode ? Colors.Gray8 : "" }}
                   onClick={() => toggleFaq(faq.id)}
                 >
                   {openFaqId === faq.id ? "-" : "+"}

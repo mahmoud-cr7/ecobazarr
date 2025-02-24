@@ -39,6 +39,8 @@ import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import avatar from "../../assets/avatar.png";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { Snackbar } from "@mui/material";
+import { useSelector } from "react-redux";
+import { RootState } from "../../store/store";
 interface ProductProps {
   // Define your props here
 }
@@ -123,6 +125,8 @@ const Product: React.FC<GroceryCardProps> = ({
   const [user, setUser] = useState<{ email: string } | null>(null);
   const [notAuthorized, setNotAuthorized] = useState(false);
   const { id: productId } = useParams();
+  const darkMode = useSelector((state: RootState) => state.theme.darkMode);
+
   useEffect(() => {
     const auth = getAuth(app);
 
@@ -365,7 +369,10 @@ const Product: React.FC<GroceryCardProps> = ({
               </div>
             </div>
             <div className="product-info">
-              <h1 className="name">
+              <h1
+                style={{ color: darkMode ? Colors.Gray1 : Colors.Gray9 }}
+                className="name"
+              >
                 {productData?.name} <span className="stock">In Stock</span>
               </h1>
               <div className="main-details">
@@ -380,7 +387,12 @@ const Product: React.FC<GroceryCardProps> = ({
                       className="star"
                     />
                   </div>
-                  <p className="review">4 Review</p>
+                  <p
+                    style={{ color: darkMode ? Colors.Gray4 : Colors.Gray9 }}
+                    className="review"
+                  >
+                    4 Review
+                  </p>
                 </div>
                 <p className="sku">
                   <span>SKU:</span>2,51,594
@@ -571,29 +583,59 @@ const Product: React.FC<GroceryCardProps> = ({
               <>
                 <ul className="additional-info">
                   <li>
-                    <span style={{ color: Colors.Gray9 }}>Weight:</span>
+                    <span
+                      style={{
+                        color: darkMode ? Colors.Gray0_5 : Colors.Gray9,
+                      }}
+                    >
+                      Weight:
+                    </span>
                     <span className="value" style={{ color: Colors.Gray6 }}>
                       03
                     </span>
                   </li>
                   <li>
-                    <span style={{ color: Colors.Gray9 }}>Type:</span>
+                    <span
+                      style={{
+                        color: darkMode ? Colors.Gray0_5 : Colors.Gray9,
+                      }}
+                    >
+                      Type:
+                    </span>
                     <span style={{ color: Colors.Gray6 }}>Organic</span>
                   </li>
                   <li>
-                    <span style={{ color: Colors.Gray9 }}>Category:</span>
+                    <span
+                      style={{
+                        color: darkMode ? Colors.Gray0_5 : Colors.Gray9,
+                      }}
+                    >
+                      Category:
+                    </span>
                     <span style={{ color: Colors.Gray6 }}>
                       {productData?.categoryRef}
                     </span>
                   </li>
                   <li>
-                    <span style={{ color: Colors.Gray9 }}>Stock Status:</span>
+                    <span
+                      style={{
+                        color: darkMode ? Colors.Gray0_5 : Colors.Gray9,
+                      }}
+                    >
+                      Stock Status:
+                    </span>
                     <span style={{ color: Colors.Gray6 }}>
                       Available ({productData?.quantity})
                     </span>
                   </li>
                   <li>
-                    <span style={{ color: Colors.Gray9 }}>Tags: </span>
+                    <span
+                      style={{
+                        color: darkMode ? Colors.Gray0_5 : Colors.Gray9,
+                      }}
+                    >
+                      Tags:{" "}
+                    </span>
                     <span style={{ color: Colors.Gray6 }}>
                       {productData?.name && productData?.categoryRef
                         ? productData.name + productData.categoryRef

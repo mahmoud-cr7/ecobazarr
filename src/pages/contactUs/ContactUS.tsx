@@ -25,8 +25,7 @@ const center = {
   lng: -74.006, // Example: New York City longitude
 };
 const ContactUS: React.FC<ContactUSProps> = (props) => {
-
-    const darkMode = useSelector((state: RootState) => state.theme.darkMode);
+  const darkMode = useSelector((state: RootState) => state.theme.darkMode);
 
   return (
     <div className="container">

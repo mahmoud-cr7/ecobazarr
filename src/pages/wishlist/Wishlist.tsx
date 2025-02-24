@@ -27,6 +27,8 @@ import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import RemoveShoppingCartIcon from "@mui/icons-material/RemoveShoppingCart";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { arrayUnion, arrayRemove } from "firebase/firestore";
+import { useSelector } from "react-redux";
+import { RootState } from "../../store/store";
 
 interface WishlistProps {
   id: string;
@@ -70,6 +72,7 @@ const Wishlist: React.FC<WishlistProps> = ({
   );
   const [isInCart, setIsInCart] = useState(initialAddedToCart || false);
   const [user, setUser] = useState<{ email: string } | null>(null);
+  const darkMode = useSelector((state: RootState) => state.theme.darkMode);
 
   useEffect(() => {
     const auth = getAuth(app);
@@ -162,95 +165,97 @@ const Wishlist: React.FC<WishlistProps> = ({
   const isItemInCart = (item: Product) => {
     return user && allProducts[item.id]?.cartUsers?.includes(user.email);
   };
-const addToCart = async (productId: string) => {
-  try {
-    const productRef = doc(db, "products", productId);
-    const productSnap = await getDoc(productRef);
+  const addToCart = async (productId: string) => {
+    try {
+      const productRef = doc(db, "products", productId);
+      const productSnap = await getDoc(productRef);
 
-    if (!productSnap.exists()) {
-      return;
-    }
+      if (!productSnap.exists()) {
+        return;
+      }
 
-    const productData = productSnap.data();
-    const isAlreadyInCart = productData.cartUsers?.includes(user?.email);
+      const productData = productSnap.data();
+      const isAlreadyInCart = productData.cartUsers?.includes(user?.email);
 
-    const cartRef = doc(db, "cart", productId);
-    const cartSnap = await getDoc(cartRef);
+      const cartRef = doc(db, "cart", productId);
+      const cartSnap = await getDoc(cartRef);
 
-    if (isAlreadyInCart) {
-      if (cartSnap.exists()) {
-        const cartData = cartSnap.data();
-        const updatedUsersMails = cartData.usersMails.filter(
-          (email: string) => email !== user?.email
-        );
+      if (isAlreadyInCart) {
+        if (cartSnap.exists()) {
+          const cartData = cartSnap.data();
+          const updatedUsersMails = cartData.usersMails.filter(
+            (email: string) => email !== user?.email
+          );
 
-        if (updatedUsersMails.length > 0) {
-          await updateDoc(cartRef, { usersMails: updatedUsersMails });
-        } else {
-          await deleteDoc(cartRef);
+          if (updatedUsersMails.length > 0) {
+            await updateDoc(cartRef, { usersMails: updatedUsersMails });
+          } else {
+            await deleteDoc(cartRef);
+          }
         }
-      }
 
-      await updateDoc(productRef, {
-        addedToCart: false,
-        cartUsers: arrayRemove(user?.email),
-      });
-
-      setCartStatus((prevStatus) => ({
-        ...prevStatus,
-        [productId]: false,
-      }));
-
-      // ✅ Update allProducts to reflect the change
-      setAllProducts((prevProducts) => ({
-        ...prevProducts,
-        [productId]: {
-          ...prevProducts[productId],
-          cartUsers: prevProducts[productId].cartUsers
-            ? prevProducts[productId].cartUsers.filter(
-                (email: string) => user?.email ? email !== user.email : true
-              )
-            : [],
-        },
-      }));
-    } else {
-      if (cartSnap.exists()) {
-        await updateDoc(cartRef, {
-          usersMails: arrayUnion(user?.email),
+        await updateDoc(productRef, {
+          addedToCart: false,
+          cartUsers: arrayRemove(user?.email),
         });
+
+        setCartStatus((prevStatus) => ({
+          ...prevStatus,
+          [productId]: false,
+        }));
+
+        // ✅ Update allProducts to reflect the change
+        setAllProducts((prevProducts) => ({
+          ...prevProducts,
+          [productId]: {
+            ...prevProducts[productId],
+            cartUsers: prevProducts[productId].cartUsers
+              ? prevProducts[productId].cartUsers.filter((email: string) =>
+                  user?.email ? email !== user.email : true
+                )
+              : [],
+          },
+        }));
       } else {
-        await setDoc(cartRef, {
-          name: productData.name,
-          imageUrl: productData.imageUrl,
-          price: productData.price,
-          quantity: 1,
-          usersMails: [user?.email],
+        if (cartSnap.exists()) {
+          await updateDoc(cartRef, {
+            usersMails: arrayUnion(user?.email),
+          });
+        } else {
+          await setDoc(cartRef, {
+            name: productData.name,
+            imageUrl: productData.imageUrl,
+            price: productData.price,
+            quantity: 1,
+            usersMails: [user?.email],
+          });
+        }
+
+        await updateDoc(productRef, {
+          addedToCart: true,
+          cartUsers: arrayUnion(user?.email),
         });
+
+        setCartStatus((prevStatus) => ({
+          ...prevStatus,
+          [productId]: true,
+        }));
+
+        // ✅ Update allProducts to reflect the change
+        setAllProducts((prevProducts) => ({
+          ...prevProducts,
+          [productId]: {
+            ...prevProducts[productId],
+            cartUsers: user?.email
+              ? [...(prevProducts[productId].cartUsers || []), user.email]
+              : [...(prevProducts[productId].cartUsers || [])],
+          },
+        }));
       }
-
-      await updateDoc(productRef, {
-        addedToCart: true,
-        cartUsers: arrayUnion(user?.email),
-      });
-
-      setCartStatus((prevStatus) => ({
-        ...prevStatus,
-        [productId]: true,
-      }));
-
-      // ✅ Update allProducts to reflect the change
-      setAllProducts((prevProducts) => ({
-        ...prevProducts,
-        [productId]: {
-          ...prevProducts[productId],
-          cartUsers: user?.email ? [...(prevProducts[productId].cartUsers || []), user.email] : [...(prevProducts[productId].cartUsers || [])],
-        },
-      }));
+    } catch (error) {
+      console.error("Error updating cart:", error);
     }
-  } catch (error) {
-    console.error("Error updating cart:", error);
-  }
-};
+  };
   const handleDeleteProduct = async (
     productId: string,
     productName: string
@@ -303,18 +308,32 @@ const addToCart = async (productId: string) => {
       />
       <div className="container">
         <div className="wishlist">
-          <h1 className="title">My WishList</h1>
+          <h1
+            style={{ color: darkMode ? Colors.Gray1 : Colors.Gray9 }}
+            className="title"
+          >
+            My WishList
+          </h1>
           <div className="wishlist-table">
             <table>
               <thead className="table-header">
                 <tr>
-                  <th className="cell" style={{ color: Colors.Gray5 }}>
+                  <th
+                    className="cell"
+                    style={{ color: darkMode ? Colors.Gray3 : Colors.Gray5 }}
+                  >
                     PRODUCT
                   </th>
-                  <th className="cell" style={{ color: Colors.Gray5 }}>
+                  <th
+                    className="cell"
+                    style={{ color: darkMode ? Colors.Gray3 : Colors.Gray5 }}
+                  >
                     PRICE
                   </th>
-                  <th className="cell" style={{ color: Colors.Gray5 }}>
+                  <th
+                    className="cell"
+                    style={{ color: darkMode ? Colors.Gray3 : Colors.Gray5 }}
+                  >
                     STOCK STATUS
                   </th>
                 </tr>
@@ -394,7 +413,9 @@ const addToCart = async (productId: string) => {
               </tbody>
               <tbody>
                 <div className="share">
-                  <p>Share :</p>
+                  <p style={{ color: darkMode ? Colors.Gray1 : Colors.Gray9 }}>
+                    Share :
+                  </p>
                   <div className="social-icons">
                     <FacebookIcon
                       className="icon"
