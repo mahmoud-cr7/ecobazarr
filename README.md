@@ -52,4 +52,17 @@ export default tseslint.config({
     ...react.configs['jsx-runtime'].rules,
   },
 })
+```
+Deployment
+To deploy ECOBAZAR using Firebase Hosting:
 
+1.Build the project:
+```sh
+npm run build
+```
+2.Deploy to Firebase:
+```sh
+firebase deploy
+```
+Contributing
+Contributions are welcome! Please submit issues or pull requests to help improve the platform.
