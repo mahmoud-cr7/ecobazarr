@@ -40,4 +40,16 @@ Expanding ESLint Configuration
 If you're developing a production application, update your ESLint config as follows:
 
 1.Configure the top-level parserOptions:
+```js
+// eslint.config.js
+import react from 'eslint-plugin-react'
+
+export default tseslint.config({
+  settings: { react: { version: '18.3' } },
+  plugins: { react },
+  rules: {
+    ...react.configs.recommended.rules,
+    ...react.configs['jsx-runtime'].rules,
+  },
+})
 
