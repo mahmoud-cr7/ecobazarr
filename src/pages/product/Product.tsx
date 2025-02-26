@@ -155,7 +155,7 @@ const Product: React.FC<GroceryCardProps> = ({
         if (docSnap.exists()) {
           setProductData(docSnap.data() as Product);
           setIsInCart(docSnap.data().addedToCart);
-          setIsInWishlist(docSnap.data().addedToWishlist);
+          setIsInWishlist(docSnap.data().wishUsers?.includes(user?.email));
         } else {
           console.log("No such document!");
         }
@@ -180,6 +180,7 @@ const Product: React.FC<GroceryCardProps> = ({
   useEffect(() => {
     if (productData && user) {
       setIsInCart(!!productData?.cartUsers?.includes(user?.email));
+      setIsInWishlist(!!productData?.wishUsers?.includes(user?.email));
     }
   }, [productData, user]);
   const updateProductCartStatus = async (status: boolean) => {
@@ -188,6 +189,18 @@ const Product: React.FC<GroceryCardProps> = ({
       await updateDoc(productRef, { addedToCart: status });
     } catch (error) {
       console.error("Error updating product cart status:", error);
+    }
+  };
+  const updateProductWishlistStatus = async (status: boolean) => {
+    try {
+      const productRef = doc(db, "products", id);
+      if (user) {
+        await updateDoc(productRef, {
+          wishUsers: status ? arrayUnion(user.email) : arrayRemove(user.email),
+        });
+      }
+    } catch (error) {
+      console.error("Error updating product wishlist status:", error);
     }
   };
   const addToCart = async () => {
@@ -202,6 +215,14 @@ const Product: React.FC<GroceryCardProps> = ({
         return;
       }
 
+      if (!productId) {
+        console.error("Product ID is undefined");
+        return;
+      }
+      if (!productId) {
+        console.error("Product ID is undefined");
+        return;
+      }
       const productRef = doc(db, "products", productId);
       const productSnap = await getDoc(productRef);
 
@@ -260,60 +281,70 @@ const Product: React.FC<GroceryCardProps> = ({
     }
   };
 
-  const addToWishlist = async () => {
-    if (user) {
-      if (!productId) return;
+const addToWishlist = async () => {
+  if (!user) {
+    setNotAuthorized(true);
+    return;
+  }
+  if (!productId) {
+    console.error("Product ID is undefined");
+    return;
+  }
+  try {
+    const productRef = doc(db, "products", productId);
+    const productSnap = await getDoc(productRef);
 
-      try {
-        // Fetch the product document
-        const productRef = doc(db, "products", productId);
-        const productSnap = await getDoc(productRef);
-
-        if (!productSnap.exists()) {
-          console.log("No such product document!");
-          return;
-        }
-
-        const productData = productSnap.data();
-        const isAlreadyInWishlist = productData.addedToWishlist; // Check the addedToWishlist status
-
-        if (isAlreadyInWishlist) {
-          // If already in wishlist, remove from wishlist collection
-          try {
-            await deleteDoc(doc(db, "Wishlist", productId));
-            console.log("Product removed from wishlist:", productData.name);
-            setIsInWishlist(false);
-
-            // Update product's addedToWishlist field in Firestore
-            await updateDoc(productRef, { addedToWishlist: false });
-          } catch (error) {
-            console.error("Error removing from wishlist:", error);
-          }
-        } else {
-          // If not in wishlist, add it using the same product ID
-          try {
-            await setDoc(doc(db, "Wishlist", productId), {
-              name: productData.name,
-              imageUrl: productData.imageUrl,
-              price: productData.price,
-              quantity: quantities,
-            });
-            console.log("Product added to wishlist:", productData.name);
-            setIsInWishlist(true);
-
-            // Update product's addedToWishlist field in Firestore
-            await updateDoc(productRef, { addedToWishlist: true });
-          } catch (error) {
-            console.error("Error adding to wishlist:", error);
-          }
-        }
-      } catch (error) {
-        console.error("Error fetching product:", error);
-      }
-    } else {
-      setNotAuthorized(true);
+    if (!productSnap.exists()) {
+      console.error("Product not found");
+      return;
     }
-  };
+
+    const wishlistRef = doc(db, "Wishlist", productId); // Use the same product ID for the wishlist
+    const wishlistSnap = await getDoc(wishlistRef);
+
+    if (wishlistSnap.exists()) {
+      const updatedUsersMails = wishlistSnap
+        .data()
+        .usersMails.includes(user.email)
+        ? wishlistSnap
+            .data()
+            .usersMails.filter((email: string) => email !== user.email)
+        : [...wishlistSnap.data().usersMails, user.email];
+
+      if (updatedUsersMails.length > 0) {
+        await updateDoc(wishlistRef, { usersMails: updatedUsersMails });
+      } else {
+        await deleteDoc(wishlistRef); // Remove wishlist item if no users remain
+      }
+
+      await updateDoc(productRef, {
+        wishUsers:
+          updatedUsersMails.length > 0
+            ? arrayUnion(user.email)
+            : arrayRemove(user.email),
+      });
+
+      setIsInWishlist(updatedUsersMails.includes(user.email));
+      updateProductWishlistStatus(updatedUsersMails.includes(user.email));
+    } else {
+      await updateDoc(productRef, {
+        wishUsers: arrayUnion(user.email),
+      });
+
+      await setDoc(wishlistRef, {
+        name: productData?.name,
+        imageUrl: productData?.imageUrl,
+        price: productData?.price,
+        usersMails: [user.email],
+      });
+
+      setIsInWishlist(true);
+      updateProductWishlistStatus(true);
+    }
+  } catch (error) {
+    console.error("Error updating wishlist:", error);
+  }
+};
   const fetchProductsFromFirestore = async (): Promise<Product[]> => {
     const querySnapshot = await getDocs(collection(db, "products"));
     return querySnapshot.docs.map((doc) => ({
@@ -464,7 +495,7 @@ const Product: React.FC<GroceryCardProps> = ({
                     Add to Cart <ShoppingCartIcon />
                   </ButtonShape>
                 )}
-                {user && productData?.wishUsers?.includes(user?.email) ? (
+                {isInWishlist? (
                   <FavoriteIcon
                     className="FavoriteBorderIcon"
                     style={{ color: Colors.Primary }}
