@@ -10,42 +10,59 @@ import Colors from "../../utils/Colors";
 import ButtonShape from "../button/Button";
 import logoPng from "../../assets/logo.png";
 import paiment from "../../assets/paiment.png";
+import { useNavigate } from "react-router-dom";
 interface FooterProps {
   // Define your props here
 }
 interface FooterList {
   key: number;
   title: string;
-  list: string[];
+  list: { name: string; nav: string }[];
 }
 const footerList: { [key: string]: FooterList } = {
   MyAccount: {
     key: 1,
     title: "My Account",
-    list: ["My Account", "Order History ", "Shoping Cart", "Wishlist"],
+    list: [
+      { name: "My Account", nav: "/my-account" },
+      { name: "Order History ", nav: "/order-history" },
+      { name: "Shoping Cart", nav: "/cart" },
+      { name: "Wishlist", nav: "/wishlist" },
+    ],
   },
   Helps: {
     key: 2,
     title: "Helps",
-    list: ["Contact", "Faqs", "Terms & Condition", "Privacy Policy"],
+    list: [
+      { name: "Contact", nav: "/ContactUs" },
+      { name: "Faqs", nav: "/Faqs" },
+      { name: "Terms & Condition", nav: "/terms-condition" },
+      { name: "Privacy Policy", nav: "/privacy-policy" },
+    ],
   },
   Proxy: {
     key: 3,
     title: "Proxy",
-    list: ["About ", "Shop", "Product", "Track Order"],
+    list: [
+      { name: "About Us", nav: "/aboutUs" },
+      { name: "Shop", nav: "/Shop" },
+      { name: "Product", nav: "/products" },
+      { name: "Track Order", nav: "/track-order" },
+    ],
   },
   Categories: {
     key: 4,
     title: "Categories",
     list: [
-      "Fruit & Vegetables",
-      "Meat & Fish",
-      "Bread & Bakery",
-      "Beauty & Health",
+      { name: "Fruit & Vegetables", nav: "/fruit-vegetables" },
+      { name: "Meat & Fish", nav: "/meat-fish" },
+      { name: "Bread & Bakery", nav: "/bread-bakery" },
+      { name: "Beauty & Health", nav: "/beauty-health" },
     ],
   },
 };
 const Footer: React.FC<FooterProps> = (props) => {
+  const navigate = useNavigate();
   return (
     <>
       <div className="footer">
@@ -113,9 +130,15 @@ const Footer: React.FC<FooterProps> = (props) => {
               <div className="list" key={key}>
                 <h3 style={{ color: Colors.White }}>{footerList[key].title}</h3>
                 <ul>
-                  {footerList[key].list.map((item: string) => (
-                    <li key={item} style={{ color: Colors.Gray4 }}>
-                      {item}
+                  {footerList[key].list.map((item) => (
+                    <li
+                      key={item.nav}
+                      style={{ color: Colors.Gray4 }}
+                      onClick={() => {
+                        navigate(item.nav);
+                      }}
+                    >
+                      {item.name}
                     </li>
                   ))}
                 </ul>
