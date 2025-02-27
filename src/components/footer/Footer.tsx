@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-empty-object-type */
-import React from "react";
+import React, { useEffect, useState } from "react";
 import FacebookIcon from "@mui/icons-material/Facebook";
 import InstagramIcon from "@mui/icons-material/Instagram";
 import XIcon from "@mui/icons-material/X";
@@ -11,6 +11,8 @@ import ButtonShape from "../button/Button";
 import logoPng from "../../assets/logo.png";
 import paiment from "../../assets/paiment.png";
 import { useNavigate } from "react-router-dom";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { app } from "../../firebase/Firebase";
 interface FooterProps {
   // Define your props here
 }
@@ -24,7 +26,7 @@ const footerList: { [key: string]: FooterList } = {
     key: 1,
     title: "My Account",
     list: [
-      { name: "My Account", nav: "/my-account" },
+      { name: "My Account", nav: "/profile" },
       { name: "Order History ", nav: "/order-history" },
       { name: "Shoping Cart", nav: "/cart" },
       { name: "Wishlist", nav: "/wishlist" },
@@ -63,6 +65,22 @@ const footerList: { [key: string]: FooterList } = {
 };
 const Footer: React.FC<FooterProps> = (props) => {
   const navigate = useNavigate();
+    const [user, setUser] = useState<{ email: string } | null>(null);
+    useEffect(() => {
+      const auth = getAuth(app);
+
+      // Listen for authentication state changes
+      const unsubscribe = onAuthStateChanged(auth, (user) => {
+        if (user) {
+          setUser({ email: user.email || "" });
+        } else {
+          setUser(null);
+        }
+      });
+
+      // Cleanup subscription on unmount
+      return () => unsubscribe();
+    }, []);
   return (
     <>
       <div className="footer">
@@ -135,7 +153,18 @@ const Footer: React.FC<FooterProps> = (props) => {
                       key={item.nav}
                       style={{ color: Colors.Gray4 }}
                       onClick={() => {
-                        navigate(item.nav);
+                        if (item.nav === "/profile" || item.nav === "/cart" || item.nav === "/wishlist" || item.nav === "/order-history") {
+                         
+                          if(user){
+                            navigate(item.nav);
+                          }
+                          else{
+                            navigate("/signIn");
+                          }
+                          
+                        }else{
+                          navigate(item.nav);
+                        }
                       }}
                     >
                       {item.name}

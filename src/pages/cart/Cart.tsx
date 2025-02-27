@@ -28,8 +28,10 @@ interface Product {
   imageUrl: string;
   quantity: number;
 }
-
-const Cart: React.FC = () => {
+interface Cart {
+  className: string;
+}
+const Cart: React.FC<Cart> = ({ className }) => {
   const [cartItems, setCartItems] = useState<Product[]>([]);
   const [quantities, setQuantities] = useState<{ [key: string]: number }>({});
   const [cartChanged, setCartChanged] = useState(false);
@@ -226,7 +228,7 @@ const Cart: React.FC = () => {
           },
         }}
       />
-      <div className="container">
+      <div className={`${className}`}>
         <div className="cart">
           <h1
             style={{
@@ -318,16 +320,16 @@ const Cart: React.FC = () => {
                         <td className="cart-item-value cart-item-total">
                           ${(product.price * quantities[product.id]).toFixed(2)}
                         </td>
-                        <td className="cart-item-remove">
+                        <td className="cart-item-remove-button">
                           {" "}
-                          <button
+                          <p
                             className="remove-button"
                             onClick={() =>
                               handleDeleteProduct(product.id, product.name)
                             }
                           >
                             x
-                          </button>
+                          </p>
                         </td>
                       </tr>
                     ))}

@@ -40,6 +40,7 @@ interface WishlistProps {
   quantity: number;
   cartUsers?: string[];
   wishUsers?: string[];
+  className?: string;
 }
 
 interface Product {
@@ -62,6 +63,7 @@ const Wishlist: React.FC<WishlistProps> = ({
   addedToCart: initialAddedToCart,
   cartUsers,
   wishUsers,
+  className,
 }) => {
   const [cartItems, setCartItems] = useState<Product[]>([]);
   const [wishlistChanged, setWishlistChanged] = useState(false);
@@ -306,7 +308,7 @@ const Wishlist: React.FC<WishlistProps> = ({
           },
         }}
       />
-      <div className="container">
+      <div className={`${className}`}>
         <div className="wishlist">
           <h1
             style={{ color: darkMode ? Colors.Gray1 : Colors.Gray9 }}

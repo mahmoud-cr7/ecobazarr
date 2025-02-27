@@ -43,7 +43,8 @@
   font-weight: bold;
   margin-inline: 5px;
   border-radius: 8px;
-  padding: 8px;
+  padding-block: 2px;
+  padding-inline: 8px;
 }
 .home .banner .content h1 {
   font-size: 43px;
@@ -255,7 +256,7 @@
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   padding-bottom: 10px;
 }
-.leatest-news .news .read-more{
+.leatest-news .news .read-more {
   margin-inline-start: 10px;
 }
 .leatest-news .news:hover {

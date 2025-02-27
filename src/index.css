@@ -6,3 +6,9 @@ body.dark {
   background-color: #242729;
   color: white;
 }
+  body {
+    font-family: 'Cairo', sans-serif;
+  }
+  h1, h2, h3 {
+  font-family: 'Cairo', sans-serif;
+}

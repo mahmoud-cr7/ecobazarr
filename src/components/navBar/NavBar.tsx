@@ -7,6 +7,7 @@ import ShoppingBagIcon from "@mui/icons-material/ShoppingBag";
 import SearchIcon from "@mui/icons-material/Search";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import logoPng from "../../assets/logo.png";
+import avatar from "../../assets/avatar.png";
 import "./NavBar.css";
 import { Button, ToggleButton } from "@mui/material";
 import Colors from "../../utils/Colors";
@@ -32,6 +33,7 @@ import Wishlist from "../wishListDrawer/WishListDrawer";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../store/store";
 import { toggleDarkMode } from "../../store/themeSlice";
+
 interface NavBarProps {
   // Define your props here
 }
@@ -128,9 +130,21 @@ const NavBar: React.FC<NavBarProps> = (props) => {
           >
             {user ? (
               <>
-                <span style={{ color: darkMode ? Colors.Gray1 : Colors.Gray6 }}>
+                {/* <span style={{ color: darkMode ? Colors.Gray1 : Colors.Gray6 }}
+                onClick={() => {
+                  navigate("/profile");
+                }}
+                >
+
                   {user.email}
-                </span>
+                </span> */}
+                <div
+                  onClick={() => {
+                    navigate("/profile");
+                  }}
+                >
+                  <img src={avatar} alt="" className="avatar" />
+                </div>
                 <Button
                   variant="text"
                   style={{ color: darkMode ? Colors.Gray1 : Colors.Gray6 }}

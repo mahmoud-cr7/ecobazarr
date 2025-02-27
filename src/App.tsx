@@ -20,6 +20,7 @@ import Blogs from "./pages/blogs/Blogs";
 import Faqs from "./pages/faqs/Faqs";
 import Blog from "./pages/blog/Blog";
 import Product from "./pages/product/Product";
+import Profile from "./pages/profile/Profile";
 
 function App() {
   const [newsletterOpen, setNewsletterOpen] = useState(false);
@@ -53,7 +54,7 @@ function App() {
         },
         {
           path: "/cart",
-          element: <Cart />,
+          element: <Cart className="container" />,
         },
         {
           path: "/aboutUs",
@@ -74,7 +75,7 @@ function App() {
         {
           path: "/wishlist",
           element: (
-            <Wishlist id={""} name={""} imageUrl={""} price={0} quantity={0} />
+            <Wishlist id={""} name={""} imageUrl={""} price={0} quantity={0} className="container" />
           ),
         },
         {
@@ -97,6 +98,10 @@ function App() {
           path: "/product/:id",
           element: <Product id={""} name={""} imageUrl={""} price={0} quantity={0} categoryRef={""}  />,
         },
+        {
+          path: "/profile",
+          element: <Profile />,
+        }
       ],
     },
   ]);

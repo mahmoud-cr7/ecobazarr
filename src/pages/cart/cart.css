@@ -90,6 +90,9 @@
   justify-content: center;
   text-align: center;
 }
+.cart-item-remove-button{
+  padding-inline-start: inherit;
+}
 .cart-total {
   flex: 0.3;
 }
