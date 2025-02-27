@@ -22,6 +22,10 @@
   border: 1px solid #ccc;
   border-radius: 5px;
   font-size: 16px;
+  outline: none;
+}
+.sign-in .input:focus {
+  border: 1px solid #84d187;
 }
 .sign-in .email-container {
   width: 100%;
@@ -46,4 +50,13 @@
 }
 .sign-in button {
   margin-bottom: 20px;
+}
+.password-strength {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 10px;
+  border-radius: 8px;
+  padding-inline: 10px;
+  font-size: 14px;
 }

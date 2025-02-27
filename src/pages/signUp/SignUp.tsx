@@ -20,6 +20,7 @@ interface SignUpProps {
 
 const SignUp: React.FC<SignUpProps> = ({ signUp } = { signUp: false }) => {
   const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -34,7 +35,12 @@ const SignUp: React.FC<SignUpProps> = ({ signUp } = { signUp: false }) => {
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
+    
   };
+
+  const toggleConfirmPasswordVisibility = () => {
+    setShowConfirmPassword(!showConfirmPassword);
+  }
 
   const validateEmail = (email: string) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -107,7 +113,30 @@ const SignUp: React.FC<SignUpProps> = ({ signUp } = { signUp: false }) => {
       }
     }
   };
+const getPasswordStrength = (password: string) => {
+  let strength = 0;
+  if (password.length >= 8) strength++;
+  if (/[A-Z]/.test(password)) strength++;
+  if (/[0-9]/.test(password)) strength++;
+  if (/[^A-Za-z0-9]/.test(password)) strength++;
 
+  return strength;
+};
+
+const getPasswordStrengthColor = (strength: number) => {
+  switch (strength) {
+    case 1:
+      return "red";
+    case 2:
+      return "orange";
+    case 3:
+      return "blue";
+    case 4:
+      return "green";
+    default:
+      return "gray";
+  }
+};
   return (
     <>
       <Snackbar
@@ -159,7 +188,7 @@ const SignUp: React.FC<SignUpProps> = ({ signUp } = { signUp: false }) => {
         </div>
         <div className="password-container">
           <input
-            type={showPassword ? "text" : "password"}
+            type={showConfirmPassword ? "text" : "password"}
             name="confirmPassword"
             className="input password"
             placeholder="Confirm password"
@@ -167,8 +196,35 @@ const SignUp: React.FC<SignUpProps> = ({ signUp } = { signUp: false }) => {
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
           />
-          <span className="toggle-password" onClick={togglePasswordVisibility}>
-            {showPassword ? (
+
+          <div
+            className="password-strength-bar"
+            style={{
+              width: "100%",
+              height: "10px",
+              backgroundColor: "#e0e0e0",
+              borderRadius: "5px",
+              marginTop: "5px",
+            }}
+          >
+            <div
+              style={{
+                width: `${(getPasswordStrength(password) / 4) * 100}%`,
+                height: "100%",
+                backgroundColor: getPasswordStrengthColor(
+                  getPasswordStrength(password)
+                ),
+                borderRadius: "5px",
+                transition: "width 0.3s ease-in-out",
+              }}
+            ></div>
+          </div>
+
+          <span
+            className="toggle-password"
+            onClick={toggleConfirmPasswordVisibility}
+          >
+            {showConfirmPassword ? (
               <VisibilityOffIcon />
             ) : (
               <RemoveRedEyeIcon style={{ color: Colors.Primary }} />
