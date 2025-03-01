@@ -12,6 +12,8 @@ import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 import { app } from "../../firebase/Firebase";
 import { useNavigate } from "react-router-dom";
 import { FirebaseError } from "firebase/app";
+import { useSelector } from "react-redux";
+import { RootState } from "../../store/store";
 
 interface SignUpProps {
   // Define your props here
@@ -32,15 +34,15 @@ const SignUp: React.FC<SignUpProps> = ({ signUp } = { signUp: false }) => {
     password?: string;
     confirmPassword?: string;
   }>({});
+  const darkMode = useSelector((state: RootState) => state.theme.darkMode);
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
-    
   };
 
   const toggleConfirmPasswordVisibility = () => {
     setShowConfirmPassword(!showConfirmPassword);
-  }
+  };
 
   const validateEmail = (email: string) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -113,30 +115,30 @@ const SignUp: React.FC<SignUpProps> = ({ signUp } = { signUp: false }) => {
       }
     }
   };
-const getPasswordStrength = (password: string) => {
-  let strength = 0;
-  if (password.length >= 8) strength++;
-  if (/[A-Z]/.test(password)) strength++;
-  if (/[0-9]/.test(password)) strength++;
-  if (/[^A-Za-z0-9]/.test(password)) strength++;
+  const getPasswordStrength = (password: string) => {
+    let strength = 0;
+    if (password.length >= 8) strength++;
+    if (/[A-Z]/.test(password)) strength++;
+    if (/[0-9]/.test(password)) strength++;
+    if (/[^A-Za-z0-9]/.test(password)) strength++;
 
-  return strength;
-};
+    return strength;
+  };
 
-const getPasswordStrengthColor = (strength: number) => {
-  switch (strength) {
-    case 1:
-      return "red";
-    case 2:
-      return "orange";
-    case 3:
-      return "blue";
-    case 4:
-      return "green";
-    default:
-      return "gray";
-  }
-};
+  const getPasswordStrengthColor = (strength: number) => {
+    switch (strength) {
+      case 1:
+        return "red";
+      case 2:
+        return "orange";
+      case 3:
+        return "blue";
+      case 4:
+        return "green";
+      default:
+        return "gray";
+    }
+  };
   return (
     <>
       <Snackbar
@@ -153,7 +155,13 @@ const getPasswordStrengthColor = (strength: number) => {
           },
         }}
       />
-      <div className="sign-in container">
+      <div
+        style={{
+          backgroundColor: darkMode ? Colors.Gray9 : "",
+          color: darkMode ? Colors.Gray9 : "",
+        }}
+        className="sign-in container"
+      >
         <h1>Sign Up</h1>
         <div className="email-container">
           <input

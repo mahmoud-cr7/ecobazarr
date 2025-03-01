@@ -13,6 +13,8 @@ import { app } from "../../firebase/Firebase";
 import { Navigate } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { Snackbar } from "@mui/material";
+import { useSelector } from "react-redux";
+import { RootState } from "../../store/store";
 // import Snackbar from "@mui/joy/Snackbar";
 
 interface SignInProps {
@@ -29,6 +31,8 @@ const SignIn: React.FC<SignInProps> = ({ signUp } = { signUp: false }) => {
   );
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [signUpSuccess, setSignUpSuccess] = useState(false);
+    const darkMode = useSelector((state: RootState) => state.theme.darkMode);
+
   const navigate = useNavigate();
 
   const togglePasswordVisibility = () => {
@@ -102,7 +106,11 @@ const SignIn: React.FC<SignInProps> = ({ signUp } = { signUp: false }) => {
           },
         }}
       />
-      <div className="sign-in container">
+      <div
+      style={{
+        backgroundColor: darkMode ? Colors.Gray9 :"",
+        color: darkMode ? Colors.Gray9 : ""}}
+      className="sign-in container">
         <h1>Sign In</h1>
         <div className="email-container">
           <input

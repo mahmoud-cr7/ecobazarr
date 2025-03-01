@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-empty-object-type */
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import AddLocationIcon from "@mui/icons-material/AddLocation";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import ShoppingBagIcon from "@mui/icons-material/ShoppingBag";
@@ -27,6 +27,8 @@ import {
   setDoc,
   query,
   where,
+  getDoc,
+  getFirestore,
 } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
 import Wishlist from "../wishListDrawer/WishListDrawer";
@@ -70,25 +72,63 @@ const getWishListCount = async (db: Firestore): Promise<number> => {
 const NavBar: React.FC<NavBarProps> = (props) => {
   const [isShopOpen, setIsShopOpen] = useState(false);
   const [isPagesOpen, setIsPagesOpen] = useState(false);
-  const [open, setOpen] = React.useState(false);
-  const [faVOpen, setFavOpen] = React.useState(false);
+  const [open, setOpen] = useState(false);
+  const [faVOpen, setFavOpen] = useState(false);
   const [user, setUser] = useState<{ email: string } | null>(null);
   const [cartCount, setCartCount] = useState(0);
   const [wishListCount, setWishListCount] = useState(0);
-  const [selected, setSelected] = React.useState(false);
+  const [selected, setSelected] = useState(false);
   const [notAut, setNotAut] = useState(false);
+  const [AccUser, setAccUser] = useState<{
+    email: string;
+    uid: string;
+  } | null>(null);
+
   const navigate = useNavigate();
+  const [formData, setFormData] = useState({
+    firstName: "",
+    lastName: "",
+    phone: "",
+    avatar: "",
+  });
   // const [darkMode, setDarkMode] = useState(
   //   () => localStorage.getItem("theme") === "dark"
   // );
   const dispatch = useDispatch();
   const darkMode = useSelector((state: RootState) => state.theme.darkMode);
-  useEffect(() => {
-    document.body.classList.toggle("dark", darkMode);
-  }, [darkMode]);
+useEffect(() => {
+  try {
+    if (darkMode !== undefined && document.body) {
+      
+      document.body.classList.toggle("dark", darkMode);
+      
+    }
+  } catch (error) {
+    
+    console.error("Error applying dark mode:", error);
+  }
+}, [darkMode]);
   getCartCount(db).then((count) => setCartCount(count));
   getWishListCount(db).then((count) => setWishListCount(count));
+  useEffect(() => {
+    const auth = getAuth(app);
+    const db = getFirestore(app);
 
+    const unsubscribe = onAuthStateChanged(auth, async (AccUser) => {
+      if (AccUser) {
+        setAccUser({ email: AccUser?.email || "", uid: AccUser?.uid });
+        const userRef = doc(db, "users", AccUser.uid);
+        const userSnap = await getDoc(userRef);
+        if (userSnap.exists()) {
+          setFormData(userSnap.data() as typeof formData);
+        }
+      } else {
+        setUser(null);
+      }
+    });
+
+    return () => unsubscribe();
+  }, []);
   useEffect(() => {
     const auth = getAuth(app);
 
@@ -115,6 +155,7 @@ const NavBar: React.FC<NavBarProps> = (props) => {
       setWishListCount(0);
     }
   }, [user]);
+  const handleLanguage = () => setSelected(!selected);
   return (
     <>
       <Snackbar
@@ -152,20 +193,16 @@ const NavBar: React.FC<NavBarProps> = (props) => {
             >
               {user ? (
                 <>
-                  {/* <span style={{ color: darkMode ? Colors.Gray1 : Colors.Gray6 }}
-                onClick={() => {
-                  navigate("/profile");
-                }}
-                >
-
-                  {user.email}
-                </span> */}
                   <div
                     onClick={() => {
                       navigate("/profile");
                     }}
                   >
-                    <img src={avatar} alt="" className="avatar" />
+                    <img
+                      src={formData.avatar || avatar}
+                      alt=""
+                      className="avatar"
+                    />
                   </div>
                   <Button
                     variant="text"
@@ -318,14 +355,15 @@ const NavBar: React.FC<NavBarProps> = (props) => {
                 Contact Us
               </Button>
             </div>
-            <div className="icons-section">
+            {/* <div className="icons-section">
               <ToggleButton
                 value="theme"
                 selected={darkMode}
                 onClick={() => {
-                  if (user) {
+                  try {
                     dispatch(toggleDarkMode());
-                  } else {
+                  } catch (error) {
+                    console.error("Error toggling dark mode:", error);
                     setNotAut(true);
                   }
                 }}
@@ -340,7 +378,7 @@ const NavBar: React.FC<NavBarProps> = (props) => {
               <div
                 className="language-icon"
                 style={{ color: Colors.White, backgroundColor: Colors.Primary }}
-                onClick={() => setSelected(!selected)}
+                onClick={handleLanguage}
               >
                 <LanguageIcon />
                 <ArrowDropDownIcon />
@@ -351,7 +389,7 @@ const NavBar: React.FC<NavBarProps> = (props) => {
                   </div>
                 )}
               </div>
-            </div>
+            </div> */}
           </div>
         </section>
         <TemporaryDrawer open={open} setOpen={setOpen} />

@@ -32,7 +32,7 @@
   width: 30px;
   height: 30px;
   cursor: pointer;
-} 
+}
 .login button {
   font-size: 15px;
 }
@@ -167,6 +167,19 @@
   display: flex;
   align-items: center;
   gap: 10px;
+  flex-direction: column;
+  align-items: start;
+  border-top: 1px solid #e0e0e0;
+  padding-block: 10px;
+}
+.toggle-button {
+  /* padding-inline: 10px !important; */
+  width: 58px;
+}
+.language-icon-section {
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 .language-icon {
   padding-inline: 7px;
@@ -174,7 +187,7 @@
   border-radius: 6px;
   cursor: pointer;
 }
-.language-dropdown{
+.language-dropdown {
   position: absolute;
 
   min-width: 100px;
@@ -214,7 +227,7 @@
     width: 100%;
     max-width: 250px;
   }
-  .mid .search .search-icon{
+  .mid .search .search-icon {
     display: none;
   }
   .mid .icons {
@@ -231,7 +244,11 @@
     padding: 0.5rem 2rem;
   }
 }
-
+.dark-mode-icon {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
 @media (max-width: 480px) {
   .navbar {
     font-size: 8px;
@@ -249,7 +266,7 @@
   .mid .icons .icon {
     font-size: 20px;
   }
-  .bottom{
+  .bottom {
     text-align: center;
   }
   .bottom button {

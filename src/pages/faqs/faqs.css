@@ -81,3 +81,11 @@
   align-items: center;
   justify-content: center;
 }
+
+@media (max-width: 1024px) {
+  .faqs {
+    flex-direction: column;
+    gap: 20px;
+  }
+  
+}

@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-empty-object-type */
 import React, { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../store/store";
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import HistoryIcon from "@mui/icons-material/History";
@@ -17,9 +17,15 @@ import avatarPng from "../../assets/avatar.png";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { getFirestore, doc, setDoc, getDoc } from "firebase/firestore";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import { Snackbar } from "@mui/material";
+import { Snackbar, ToggleButton } from "@mui/material";
 import Wishlist from "../../pages/wishlist/Wishlist";
 import Cart from "../cart/Cart";
+import CheckIcon from "@mui/icons-material/Check";
+import { DarkMode, LightMode } from "@mui/icons-material";
+import LanguageIcon from "@mui/icons-material/Language";
+import { toggleDarkMode } from "../../store/themeSlice";
+import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
+
 interface ProfileProps {
   // Define your props here
 }
@@ -134,6 +140,8 @@ const Profile: React.FC<ProfileProps> = (props) => {
   });
   const [saved, setSaved] = useState(false);
   const [avatar, setAvatar] = useState(avatarPng);
+  const dispatch = useDispatch();
+  const [selected, setSelected] = useState(false);
 
   useEffect(() => {
     const auth = getAuth(app);
@@ -193,6 +201,7 @@ const Profile: React.FC<ProfileProps> = (props) => {
       console.error("Error uploading image:", error);
     }
   };
+  const handleLanguage = () => setSelected(!selected);
 
   const validate = () => {
     let valid = true;
@@ -648,6 +657,52 @@ const Profile: React.FC<ProfileProps> = (props) => {
                         onChange={handleImageUpload}
                       />
                     </ButtonShape>
+                  </div>
+                </div>
+                <div className="account-content">
+                  <div className="icons-section account-icons">
+                    <div className="dark-mode-icon">
+                      <p>Dark Mode</p>
+                      <ToggleButton
+                        value="theme"
+                        selected={darkMode}
+                        className="toggle-button"
+                        onClick={() => {
+                          try {
+                            dispatch(toggleDarkMode());
+                          } catch (error) {
+                            console.error("Error toggling dark mode:", error);
+                          }
+                        }}
+                        style={{ backgroundColor: Colors.Primary }}
+                      >
+                        {darkMode ? (
+                          <DarkMode style={{ color: Colors.White }} className="dark-mode-icon" />
+                        ) : (
+                          <LightMode style={{ color: Colors.White }} />
+                        )}
+                      </ToggleButton>
+                    </div>
+                    <div className="language-icon-section">
+                      <p>Language</p>
+                      <div
+                        className="language-icon"
+                        style={{
+                          color: Colors.White,
+                          backgroundColor: Colors.Primary,
+                        }}
+                        onClick={handleLanguage}
+                      >
+                        <LanguageIcon />
+                        <ArrowDropDownIcon />
+                        {selected && (
+                          <div className="language-dropdown">
+                            <p style={{ color: Colors.Primary }}>English</p>
+                            <p style={{ color: Colors.Primary }}>العربية</p>
+                          </div>
+                        )}
+                      </div>
+                    </div>
                   </div>
                 </div>
               </>
