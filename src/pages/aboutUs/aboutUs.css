@@ -6,6 +6,7 @@
   /* max-width: 1000px; */
   margin: auto;
   padding-block: 40px;
+  flex-wrap: wrap;
 }
 
 .about-section-1 .about-text {
@@ -33,10 +34,6 @@
   flex: 1;
 }
 
-
-
-
-
 .about-section-2 {
   position: relative;
   width: 100%;
@@ -60,6 +57,7 @@
   margin: auto;
   padding-block: 10px;
   gap: 40px;
+  flex-wrap: wrap;
 }
 
 .about-section-2 .about-container .about-image {
@@ -104,7 +102,7 @@
 }
 
 .about-section-2 .icon {
-    width: 50px;
+  width: 50px;
   font-size: 24px;
   margin-right: 15px;
   color: #2a7f31;

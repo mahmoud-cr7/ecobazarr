@@ -98,6 +98,7 @@ const ContactUS: React.FC<ContactUSProps> = (props) => {
             height="50px"
             backgroundColor={Colors.Primary}
             textColor={Colors.White}
+            className="contact-us-form-button"
           >
             Send Message
           </ButtonShape>

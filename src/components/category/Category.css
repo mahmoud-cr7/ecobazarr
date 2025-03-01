@@ -11,6 +11,8 @@
   transform: 0.3s;
   padding-block: 10px;
   transition: 0.3s;
+  margin-inline-start: auto;
+  margin-inline-end: auto;
 }
 .card:hover {
   transform: scale(1.05);

@@ -8,11 +8,11 @@
   margin-bottom: 20px;
 }
 .categories-cards {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 25px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 10px;
   justify-content: center;
-  align-items: center;
+  padding: 10px;
 }
 .loading {
   display: flex;

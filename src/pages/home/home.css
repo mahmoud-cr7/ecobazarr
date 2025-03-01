@@ -100,10 +100,97 @@
   text-align: center;
   width: 60%;
 }
+
+/* Mobile devices (up to 768px) */
+@media (max-width: 768px) {
+  .home {
+    flex-direction: column;
+    align-items: center;
+  }
+  .home .banner {
+    width: 100%;
+    height: 40vh;
+    padding: 2rem;
+  }
+  .home .banner .content h1 {
+    font-size: 32px;
+    width: 100%;
+  }
+  .home .side-container {
+    width: 100%;
+    flex-direction: row;
+    gap: 0.5rem;
+  }
+  .home .sale, .home .deal {
+    height: 20vh;
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    overflow: hidden;
+  }
+  .home .sale h1,
+  .home .deal h1,
+  .home .sale p,
+  .home .deal p {
+    font-size: 18px;
+    width: 80%;
+    margin: 0;
+    word-wrap: break-word;
+  }
+}
+
+/* Tablets (768px - 1024px) */
+@media (min-width: 769px) and (max-width: 1280px) {
+  .home {
+    flex-direction: column;
+    align-items: center;
+  }
+  .home .banner {
+    width: 90%;
+    height: 50vh;
+    padding: 3rem;
+  }
+  .home .banner .content h1 {
+    font-size: 36px;
+    width: 80%;
+  }
+  .home .side-container {
+    width: 90%;
+    flex-direction: row;
+    gap: 1rem;
+  }
+  .home .sale, .home .deal {
+    height: 25vh;
+    width: 50%;
+  }
+.home .sale, .home .deal {
+    height: 20vh;
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    overflow: hidden;
+  }
+  .home .sale h1,
+  .home .deal h1,
+  .home .sale p,
+  .home .deal p {
+    font-size: 18px;
+    width: 80%;
+    margin: 0;
+    word-wrap: break-word;
+  }
+}
+
 /* shipping Services */
 .services {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   padding: 40px;
   margin-block: 10px;
@@ -134,7 +221,7 @@
 /* Offers */
 .offers {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   margin-block: 10px;
   border-radius: 8px;
   gap: 1rem;
@@ -246,7 +333,7 @@
 }
 .leatest-news {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 1rem;
   /* margin-block: 10px; */
 }
@@ -305,7 +392,7 @@
 }
 .testimonials {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 1rem;
 }
 .testimonial {

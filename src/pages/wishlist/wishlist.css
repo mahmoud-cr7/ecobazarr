@@ -120,3 +120,87 @@
     pointer-events: none;
     opacity: 0.5;
 }
+@media screen and (max-width: 1024px) {
+  .wishlist .wishlist-table table td {
+    padding: 15px;
+  }
+  .table-header .cell {
+    font-size: 0.9rem;
+    padding: 12px;
+  }
+  .remove-button {
+    font-size: 18px;
+    width: 30px;
+    height: 30px;
+  }
+  .share {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .wishlist .title {
+    font-size: 1.8rem;
+  }
+  .wishlist .wishlist-table table td {
+    padding: 10px;
+    font-size: 0.9rem;
+  }
+  .table-header .cell {
+    font-size: 0.85rem;
+    padding: 10px;
+  }
+  .remove-button {
+    font-size: 16px;
+    width: 28px;
+    height: 28px;
+  }
+  .in-stock, .out-of-stock {
+    font-size: 14px;
+    width: 100px;
+    height: 28px !important;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .wishlist .title {
+    font-size: 1.5rem;
+  }
+  .wishlist .wishlist-table {
+    border-radius: 5px;
+    overflow-x: auto;
+    display: block;
+    white-space: nowrap;
+  }
+  .wishlist .wishlist-table table {
+    width: 100%;
+    min-width: 600px;
+    display: block;
+  }
+  .wishlist .wishlist-table table td {
+    padding: 8px;
+    font-size: 0.8rem;
+    word-break: break-word;
+  }
+  .table-header .cell {
+    font-size: 0.8rem;
+    padding: 8px;
+  }
+  .actions {
+    gap: 0.5rem;
+    display: flex;
+    flex-wrap: wrap;
+  }
+  .remove-button {
+    font-size: 14px;
+    width: 26px;
+    height: 26px;
+  }
+  .in-stock, .out-of-stock {
+    font-size: 13px;
+    width: 90px;
+    height: 26px !important;
+    white-space: nowrap;
+  }
+}

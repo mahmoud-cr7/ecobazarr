@@ -193,3 +193,64 @@ textarea {
   color: red;
   font-size: 1rem;
 }
+@media (max-width: 1024px) {
+  .blog-body {
+    flex-direction: column;
+    align-items: center;
+  }
+  .blog-content,
+  .sideBar-filerts {
+    flex: 1;
+    width: 100%;
+  }
+}
+
+@media (max-width: 768px) {
+  .blog-title {
+    font-size: 1.8rem;
+  }
+  .blog-title-sec {
+    font-size: 1.3rem;
+  }
+  .blog-description {
+    font-size: 1rem;
+  }
+  .blog-imgs {
+    grid-template-columns: 1fr;
+  }
+  .blog-offer {
+    flex-direction: column;
+    height: auto;
+    padding: 20px;
+  }
+  .blog-offer-content {
+    flex-direction: column;
+    align-items: center;
+  }
+  .comment-form-inputs {
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 480px) {
+  .blog-title {
+    font-size: 1.5rem;
+  }
+  .blog-title-sec {
+    font-size: 1.2rem;
+  }
+  .blog-description {
+    font-size: 0.9rem;
+  }
+  .avatar {
+    width: 40px;
+    height: 40px;
+  }
+  .social-icons .icon {
+    font-size: 1.2rem;
+  }
+  .comment-writer {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

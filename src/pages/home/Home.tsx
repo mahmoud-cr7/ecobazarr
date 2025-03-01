@@ -227,7 +227,7 @@ const Home: React.FC<HomeProps> = (
             </div>
           </div>
           <ButtonShape
-            width="200px"
+            width="50%"
             height="50px"
             backgroundColor={darkMode ? Colors.Gray7 : Colors.White}
             textColor={Colors.Primary}
@@ -240,7 +240,7 @@ const Home: React.FC<HomeProps> = (
             <p style={{ color: Colors.Gray9 }}>Summer Sale</p>
             <h1 style={{ color: Colors.Primary }}>75% OFF</h1>
             <p style={{ color: Colors.Gray6 }}>Only Fruit & Vegetable</p>
-            <ButtonShape height="50px" textColor={Colors.Primary}>
+            <ButtonShape width="70%" height="50px" textColor={Colors.Primary}>
               Shop Now <ArrowForwardIcon />
             </ButtonShape>
           </div>
@@ -248,7 +248,7 @@ const Home: React.FC<HomeProps> = (
             <p style={{ color: Colors.White }}>Best Deal</p>
             <h1>Special Products Deal of the Month</h1>
             <ButtonShape
-              width="200px"
+              width="70%"
               height="50px"
               backgroundColor={darkMode ? Colors.Gray7 : Colors.White}
               textColor={Colors.Primary}
@@ -418,8 +418,9 @@ const Home: React.FC<HomeProps> = (
                 <div className="news-img" key={indx}>
                   <img src={newBody.image} alt="news" />
                   <p
-                  style={{ color: darkMode ? Colors.Gray9 : Colors.Gray9 }}
-                  className="date">
+                    style={{ color: darkMode ? Colors.Gray9 : Colors.Gray9 }}
+                    className="date"
+                  >
                     {newBody.date[0]} <span>{newBody.date[1]}</span>
                   </p>
                 </div>
@@ -457,16 +458,19 @@ const Home: React.FC<HomeProps> = (
         style={{ backgroundColor: darkMode ? Colors.Gray8 : Colors.Gray0_5 }}
       >
         <div className="container">
-          <h1 style={{ color: darkMode ? Colors.Gray1 : Colors.Gray9 }} className="section-header">
+          <h1
+            style={{ color: darkMode ? Colors.Gray1 : Colors.Gray9 }}
+            className="section-header"
+          >
             Testimonials
           </h1>
-          <div
-            className="testimonials"
-          >
+          <div className="testimonials">
             {paginatedTestimonials.map((testimonial, indx) => (
               <div
-              style={{ backgroundColor: darkMode ? Colors.Gray7 : "" }}
-              className="testimonial" key={indx}>
+                style={{ backgroundColor: darkMode ? Colors.Gray7 : "" }}
+                className="testimonial"
+                key={indx}
+              >
                 <div className="testimonial-header">
                   <FormatQuoteIcon
                     style={{ color: Colors.Primary }}

@@ -139,3 +139,11 @@
 .bottom-footer img {
   width: 300px;
 }
+@media (max-width: 768px) {
+  .main-footer .footer-heading .footer-description{
+    width: 100%;
+  }
+  .footer .subscribe input[type="email"] {
+    width: 200px;
+  }
+}

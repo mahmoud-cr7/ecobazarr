@@ -9,6 +9,7 @@
   gap: 10px;
   margin-block: 10px;
   align-items: center;
+  flex-wrap: wrap;
 }
 .selector {
   padding-inline: 20px;
@@ -57,6 +58,7 @@
   display: flex;
   gap: 10px;
   align-items: center;
+  flex-wrap: wrap;
 }
 .apply-filters{
   border-radius: 8px  !important;
@@ -65,4 +67,9 @@
   display: flex;
   gap: 2px;
   align-items: center;
+}
+@media (max-width: 768px) {
+  .summer-sale{
+    height: 100%;
+  }
 }

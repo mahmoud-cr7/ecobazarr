@@ -10,6 +10,8 @@
   height: 320px;
   overflow: hidden;
   transition: 0.3s;
+  margin-inline-start: auto;
+  margin-inline-end: auto;
 }
 .product-card:hover {
   transform: scale(1.01);
@@ -230,4 +232,100 @@
 .image-sidebar .sidebar-image:hover {
   transform: scale(1.1);
   border: 1px solid #84d187;
+}
+@media screen and (max-width: 1024px) {
+  .product-details {
+    flex-direction: column;
+    align-items: center;
+  }
+  .product-main {
+    flex-direction: column;
+    align-items: center;
+  }
+  .product-images,
+  .product-info {
+    flex: 1;
+    width: 100%;
+    text-align: center;
+  }
+   .product-images{
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+   }
+  .image-sidebar {
+    justify-content: start;
+  }
+  .product-details .main-details {
+    justify-content: center;
+    text-align: center;
+    margin-block: 10px;
+    padding: 10px;
+  }
+  .product-details .price {
+    justify-content: center;
+    text-align: center;
+    margin-block: 10px;
+    padding: 10px;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .product-details .main-details {
+    flex-direction: column;
+    gap: 15px;
+  }
+  .product-details .price {
+    justify-content: center;
+    text-align: center;
+    margin-block: 10px;
+    padding: 10px;
+  }
+  .product-details .quantity {
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    gap: 10px;
+  }
+  .product-details .quantity .quantity-selector {
+    flex: unset;
+    width: fit-content;
+    justify-content: center;
+  }
+  .product-details .add-to-cart {
+    width: 100%;
+    text-align: center;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .product-details {
+    padding: 10px;
+  }
+  .product-details .image {
+    max-width: 100%;
+    height: auto;
+  }
+  .product-details .name {
+    font-size: 20px;
+  }
+  .product-details .price {
+    font-size: 24px;
+  }
+  .product-details .price .old-price {
+    font-size: 20px;
+  }
+  .product-details .price .discount {
+    font-size: 16px;
+  }
+  .image-sidebar {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .image-sidebar .sidebar-image {
+    width: 40px;
+    height: 40px;
+  }
 }

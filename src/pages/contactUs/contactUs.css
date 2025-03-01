@@ -80,3 +80,19 @@
 .contact-us-form div input {
   width: 48%;
 }
+
+@media (max-width: 1280px) {
+  .contact-us{
+    flex-direction: column;
+  }
+  .contact-us-info {
+    width: 100%;
+    margin-bottom: 20px;
+  }
+  .contact-us-form {
+    width: 100%;
+  }
+  .contact-us-form-button{
+    width: 100% !important;
+  }
+}
