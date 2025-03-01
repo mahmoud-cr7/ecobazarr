@@ -19,7 +19,7 @@
 }
 .wishlist .wishlist-table table td {
   padding: 20px;
-  border-bottom: 1px solid #ccc;
+  /* border-bottom: 1px solid #ccc; */
   text-align: start;
 }
 .wishlist .wishlist-table table tr {
@@ -116,9 +116,9 @@
   margin-block: 26px;
   border-bottom: 1px solid #ccc;
 }
-.disabled{
-    pointer-events: none;
-    opacity: 0.5;
+.disabled {
+  pointer-events: none;
+  opacity: 0.5;
 }
 @media screen and (max-width: 1024px) {
   .wishlist .wishlist-table table td {
@@ -156,13 +156,13 @@
     width: 28px;
     height: 28px;
   }
-  .in-stock, .out-of-stock {
+  .in-stock,
+  .out-of-stock {
     font-size: 14px;
     width: 100px;
     height: 28px !important;
   }
 }
-
 @media screen and (max-width: 480px) {
   .wishlist .title {
     font-size: 1.5rem;
@@ -172,16 +172,21 @@
     overflow-x: auto;
     display: block;
     white-space: nowrap;
+    width: 100%;
   }
   .wishlist .wishlist-table table {
     width: 100%;
-    min-width: 600px;
-    display: block;
+    min-width: 100%;
+    display: table;
+    border-collapse: collapse;
   }
   .wishlist .wishlist-table table td {
     padding: 8px;
     font-size: 0.8rem;
+    white-space: nowrap;
     word-break: break-word;
+    vertical-align: middle;
+    text-align: start;
   }
   .table-header .cell {
     font-size: 0.8rem;
@@ -197,10 +202,15 @@
     width: 26px;
     height: 26px;
   }
-  .in-stock, .out-of-stock {
+  .in-stock,
+  .out-of-stock {
     font-size: 13px;
-    width: 90px;
+    width: 90%;
     height: 26px !important;
     white-space: nowrap;
+    margin: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 }

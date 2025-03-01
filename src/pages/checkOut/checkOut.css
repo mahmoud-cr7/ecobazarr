@@ -256,3 +256,55 @@
   background-color: #00B207; /* Inner circle color */
   border-radius: 50%;
 }
+/* Media Queries */
+
+@media (max-width: 1280px) {
+  .checkout {
+    flex-direction: column;
+    align-items: center;
+  }
+  .billing-info, .order-summary {
+    flex: 1;
+    width: 100%;
+  }
+}
+
+@media (max-width: 768px) {
+  .billing-info .identity,
+  .billing-info .city,
+  .billing-info .contact {
+    flex-direction: column;
+    gap: 10px;
+  }
+  .billing-info .identity .input-div,
+  .billing-info .city .input-div,
+  .billing-info .contact .input-div {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .billing-info h1, .order-summary h1, .method h1 {
+    font-size: 1.2rem;
+  }
+  .billing-info label, .billing-info .city label, .billing-info .contact label {
+    font-size: 0.9rem;
+  }
+  .billing-info .identity input,
+  .billing-info .address input,
+  .billing-info .city input,
+  .billing-info .city select,
+  .billing-info .contact input,
+  .billing-info .order-notes textarea {
+    padding: 8px;
+  }
+  .payment-label input[type="radio"] {
+    width: 16px;
+    height: 16px;
+    margin-right: 8px;
+  }
+  .payment-label input[type="radio"]:checked::before {
+    width: 6px;
+    height: 6px;
+  }
+}
