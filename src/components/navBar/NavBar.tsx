@@ -128,7 +128,7 @@ useEffect(() => {
     });
 
     return () => unsubscribe();
-  }, []);
+  }, [user]);
   useEffect(() => {
     const auth = getAuth(app);
 
