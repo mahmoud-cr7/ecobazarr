@@ -16,11 +16,9 @@ import { app } from "../../firebase/Firebase";
 import avatarPng from "../../assets/avatar.png";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { getFirestore, doc, setDoc, getDoc } from "firebase/firestore";
-import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { Snackbar, ToggleButton } from "@mui/material";
 import Wishlist from "../../pages/wishlist/Wishlist";
 import Cart from "../cart/Cart";
-import CheckIcon from "@mui/icons-material/Check";
 import { DarkMode, LightMode } from "@mui/icons-material";
 import LanguageIcon from "@mui/icons-material/Language";
 import { toggleDarkMode } from "../../store/themeSlice";
@@ -29,13 +27,7 @@ import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 interface ProfileProps {
   // Define your props here
 }
-interface User {
-  email: string;
-  uid: string;
-  FirstName: string;
-  LastName: string;
-  Phone: number;
-}
+
 const orders = [
   {
     order_id: "#3933",
@@ -123,7 +115,7 @@ const orders = [
   },
 ];
 
-const Profile: React.FC<ProfileProps> = (props) => {
+const Profile: React.FC<ProfileProps> = () => {
   const [selectedTab, setSelectedTab] = useState<number>(0);
   const darkMode = useSelector((state: RootState) => state.theme.darkMode);
   const [user, setUser] = useState<{ email: string; uid: string } | null>(null);

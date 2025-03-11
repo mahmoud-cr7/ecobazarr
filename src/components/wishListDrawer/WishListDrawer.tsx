@@ -6,21 +6,14 @@ import List from "@mui/material/List";
 import Divider from "@mui/material/Divider";
 import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
-import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
-import IconButton from "@mui/material/IconButton";
-import AddIcon from "@mui/icons-material/Add";
-import RemoveIcon from "@mui/icons-material/Remove";
-import Button from "@mui/material/Button";
+
 import ButtonShape from "../button/Button";
 import Colors from "../../utils/Colors";
 import { useNavigate } from "react-router-dom";
 import {
   getFirestore,
   collection,
-  getDocs,
-  updateDoc,
-  doc,
   query,
   where,
 } from "firebase/firestore";
@@ -79,7 +72,6 @@ export default function Wishlist({ faVOpen, setFavOpen }: WishlistProps) {
   const navigate = useNavigate();
   const db = getFirestore(app);
   const [user, setUser] = useState<{ email: string } | null>(null);
-  const [quantities, setQuantities] = useState<{ [key: string]: number }>({});
   const darkMode = useSelector((state: RootState) => state.theme.darkMode);
 
   useEffect(() => {

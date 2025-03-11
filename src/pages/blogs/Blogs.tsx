@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-empty-object-type */
 import React, { useEffect, useState } from "react";
 import "./blogs.css";
-import { addDoc, collection, getDocs } from "firebase/firestore";
+import { collection, getDocs } from "firebase/firestore";
 import { db } from "../../firebase/Firebase";
 import Colors from "../../utils/Colors";
 import gallery1 from "../../assets/gallery1.png";
@@ -18,8 +18,7 @@ import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import SellIcon from "@mui/icons-material/Sell";
 import PersonIcon from "@mui/icons-material/Person";
 import ChatBubbleIcon from "@mui/icons-material/ChatBubble";
-import Blog from "../blog/Blog";
-import { Link } from "react-router-dom";
+
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store/store";
@@ -150,11 +149,10 @@ interface BlogInterface {
   comments: Comment[];
 }
 
-const Blogs: React.FC<BlogsProps> = (props) => {
+const Blogs: React.FC<BlogsProps> = () => {
   const [blogs, setBlogs] = useState<BlogInterface[]>([]);
   const [filteredBlogs, setFilteredBlogs] = useState<BlogInterface[]>([]);
   const [activeTag, setActiveTag] = useState<number | null>(null);
-  const [arange, setArrange] = useState<string>("newest");
   const navigate = useNavigate();
   const darkMode = useSelector((state: RootState) => state.theme.darkMode);
 

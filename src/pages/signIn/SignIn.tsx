@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable @typescript-eslint/no-empty-object-type */
 import React, { useState } from "react";
 import ButtonShape from "../../components/button/Button";
 import FormControlLabel from "@mui/material/FormControlLabel";
@@ -10,7 +9,6 @@ import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import { app } from "../../firebase/Firebase";
-import { Navigate } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { Snackbar } from "@mui/material";
 import { useSelector } from "react-redux";
@@ -75,7 +73,7 @@ const SignIn: React.FC<SignInProps> = ({ signUp } = { signUp: false }) => {
     signInWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
         // Signed in
-        const user = userCredential.user;
+        // const user = userCredential.user;
         // ...
         navigate("/");
         setSignUpSuccess(true);

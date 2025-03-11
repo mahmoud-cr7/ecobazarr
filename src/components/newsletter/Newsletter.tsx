@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useState, useEffect } from "react";
 import { styled } from "@mui/material/styles";
 import Dialog from "@mui/material/Dialog";

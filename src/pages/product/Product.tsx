@@ -4,7 +4,6 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import "./product.css";
 import {
-  addDoc,
   arrayRemove,
   arrayUnion,
   collection,
@@ -29,7 +28,6 @@ import InstagramIcon from "@mui/icons-material/Instagram";
 import XIcon from "@mui/icons-material/X";
 import PinterestIcon from "@mui/icons-material/Pinterest";
 import RemoveShoppingCartIcon from "@mui/icons-material/RemoveShoppingCart";
-import Products from "../../components/products/Products";
 import { useQuery } from "@tanstack/react-query";
 import ProductCard from "../../components/productCard/ProductCard";
 import videoPng from "../../assets/video.png";
@@ -41,9 +39,7 @@ import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { Snackbar } from "@mui/material";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store/store";
-interface ProductProps {
-  // Define your props here
-}
+
 interface Product {
   id: string;
   name: string;
@@ -104,14 +100,8 @@ const Product: React.FC<GroceryCardProps> = ({
   id,
   name,
   imageUrl,
-  price,
   addedToCart: initialAddedToCart,
-  quantity,
-  categoryRef,
   addedToWishlist: initialAddedToWishlist,
-  rating,
-  cartUsers,
-  wishUsers,
 }) => {
   const [productData, setProductData] = useState<Product | null>(null);
   const [quantities, setQuantities] = useState(1);
@@ -119,7 +109,6 @@ const Product: React.FC<GroceryCardProps> = ({
     initialAddedToWishlist || false
   );
   const [sideBarImg, setSideBarImg] = useState([imageUrl]);
-  const [isFavorite, setIsFavorite] = useState(false);
   const [isInCart, setIsInCart] = useState(initialAddedToCart || false);
   const [tabIndex, setTabIndex] = useState(0);
   const [user, setUser] = useState<{ email: string } | null>(null);
@@ -354,8 +343,6 @@ const addToWishlist = async () => {
   };
   const {
     data: products,
-    isLoading,
-    isError,
   } = useQuery<Product[]>({
     queryKey: ["products"],
     queryFn: fetchProductsFromFirestore,

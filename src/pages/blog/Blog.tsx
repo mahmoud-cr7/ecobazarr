@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-empty-object-type */
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import {
   arrayUnion,
   doc,
@@ -36,10 +34,7 @@ import ChatBubbleIcon from "@mui/icons-material/ChatBubble";
 import { useNavigate } from "react-router-dom";
 import "./blog.css";
 import { Snackbar } from "@mui/material";
-interface BlogProps {
-  // Define your props here
-  blog: BlogInterface;
-}
+
 interface Comment {
   name: string;
   date: string;
@@ -166,7 +161,6 @@ const tags: Tag[] = [
 const Blog: React.FC = () => {
   const { id: blogId } = useParams();
   const [blogData, setBlogData] = useState<BlogInterface | null>(null);
-  const [activeTag, setActiveTag] = useState<number | null>(null);
   const [visibleComments, setVisibleComments] = useState(3);
   const [commentName, setCommentName] = useState<string>("");
   const [commentContent, setCommentContent] = useState<string>("");

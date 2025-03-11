@@ -122,9 +122,6 @@
   font-weight: bold;
 }
 
-.table-row:nth-child(even) {
-  /* background-color: #f9f9f9; */
-}
 
 .table-cell {
   padding: 12px;

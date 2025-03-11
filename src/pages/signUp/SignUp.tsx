@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable @typescript-eslint/no-empty-object-type */
 import React, { useState } from "react";
 import ButtonShape from "../../components/button/Button";
 import Colors from "../../utils/Colors";
@@ -53,9 +52,6 @@ const SignUp: React.FC<SignUpProps> = ({ signUp } = { signUp: false }) => {
     return password.length >= 8; // Example: Password must be at least 8 characters long
   };
 
-  const validateConfirmPassword = (confirmPassword: string) => {
-    return confirmPassword === password;
-  };
 
   const handleSubmit = async () => {
     const newErrors: {

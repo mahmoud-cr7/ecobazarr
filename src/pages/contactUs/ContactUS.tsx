@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-empty-object-type */
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import React from "react";
 import "./ContactUS.css";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
@@ -10,7 +9,6 @@ import Colors from "../../utils/Colors";
 import { GoogleMap, LoadScript, Marker } from "@react-google-maps/api";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store/store";
-import { colors } from "@mui/material";
 
 interface ContactUSProps {
   // Define your props here
@@ -24,7 +22,7 @@ const center = {
   lat: 40.7128, // Example: New York City latitude
   lng: -74.006, // Example: New York City longitude
 };
-const ContactUS: React.FC<ContactUSProps> = (props) => {
+const ContactUS: React.FC<ContactUSProps> = () => {
   const darkMode = useSelector((state: RootState) => state.theme.darkMode);
 
   return (

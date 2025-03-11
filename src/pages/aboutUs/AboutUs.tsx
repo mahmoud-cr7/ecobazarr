@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-empty-object-type */
 import React from "react";
 import "./aboutUs.css";
@@ -15,7 +14,6 @@ import boxIcon from "../../assets/shipping_icon.png";
 import shop_icon from "../../assets/shop_icon.png";
 import lief from "../../assets/lief.png";
 import stars from "../../assets/stars.png";
-import cat1 from "../../assets/cat1.jpeg";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store/store";
 
@@ -23,7 +21,7 @@ interface AboutUsProps {
   // Define your props here
 }
 
-const AboutUs: React.FC<AboutUsProps> = (props) => {
+const AboutUs: React.FC<AboutUsProps> = () => {
   const features = [
     {
       icon: { carIcon },

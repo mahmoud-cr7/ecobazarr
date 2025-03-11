@@ -1,8 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable @typescript-eslint/no-empty-object-type */
 import React, { useEffect, useState } from "react";
 import {
-  addDoc,
   collection,
   deleteDoc,
   doc,
@@ -58,11 +56,8 @@ interface Product {
 }
 
 const Wishlist: React.FC<WishlistProps> = ({
-  id,
-  name,
-  addedToCart: initialAddedToCart,
-  cartUsers,
-  wishUsers,
+
+
   className,
 }) => {
   const [cartItems, setCartItems] = useState<Product[]>([]);
@@ -72,7 +67,6 @@ const Wishlist: React.FC<WishlistProps> = ({
   const [allProducts, setAllProducts] = useState<{ [key: string]: Product }>(
     {}
   );
-  const [isInCart, setIsInCart] = useState(initialAddedToCart || false);
   const [user, setUser] = useState<{ email: string } | null>(null);
   const darkMode = useSelector((state: RootState) => state.theme.darkMode);
 

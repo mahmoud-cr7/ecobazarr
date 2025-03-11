@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-empty-object-type */
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import React from "react";
 import "./Illustration.css";
 import illustration from "../../assets/Illustration.png";
@@ -10,7 +9,7 @@ interface IllustrationProps {
   // Define your props here
 }
 
-const Illustration: React.FC<IllustrationProps> = (props) => {
+const Illustration: React.FC<IllustrationProps> = () => {
   const navigate = useNavigate();
   return (
     <div className="container illustration">

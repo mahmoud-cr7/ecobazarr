@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-empty-object-type */
 import React from 'react';
 import NavBar from '../navBar/NavBar';
@@ -9,7 +8,7 @@ interface LayoutProps {
   // Define your props here
 }
 
-const Layout: React.FC<LayoutProps> = (props) => {
+const Layout: React.FC<LayoutProps> = () => {
   return (
     <div className="flex flex-col min-h-screen">
       {/* Navbar */}

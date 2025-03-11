@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-// CategoryCard.tsx
 import React from "react";
 import "./Category.css";
 import { useSelector } from "react-redux";

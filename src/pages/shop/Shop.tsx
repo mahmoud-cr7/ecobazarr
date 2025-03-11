@@ -1,9 +1,8 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-empty-object-type */
 import React, { useEffect, useState } from "react";
 import Colors from "../../utils/Colors";
 import ButtonShape from "../../components/button/Button";
-import { getFirestore, collection, getDocs, addDoc } from "firebase/firestore";
+import { getFirestore, collection, getDocs } from "firebase/firestore";
 import ProductCard from "../../components/productCard/ProductCard";
 import "./shop.css";
 import { useSelector } from "react-redux";

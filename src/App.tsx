@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import "./App.css";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 

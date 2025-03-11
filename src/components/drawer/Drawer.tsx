@@ -6,12 +6,10 @@ import List from "@mui/material/List";
 import Divider from "@mui/material/Divider";
 import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
-import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import IconButton from "@mui/material/IconButton";
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
-import Button from "@mui/material/Button";
 import "./drawer.css";
 import ButtonShape from "../button/Button";
 import Colors from "../../utils/Colors";
@@ -19,7 +17,6 @@ import { useNavigate } from "react-router-dom";
 import {
   getFirestore,
   collection,
-  getDocs,
   updateDoc,
   doc,
   query,
@@ -32,8 +29,6 @@ import { useState } from "react";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store/store";
-import { dark } from "@mui/material/styles/createPalette";
-import { DarkMode } from "@mui/icons-material";
 // Define the Product interface
 interface Product {
   id: string;

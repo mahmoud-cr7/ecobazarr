@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-empty-object-type */
 import React, { useEffect, useState } from "react";
 import FacebookIcon from "@mui/icons-material/Facebook";
@@ -63,7 +62,7 @@ const footerList: { [key: string]: FooterList } = {
     ],
   },
 };
-const Footer: React.FC<FooterProps> = (props) => {
+const Footer: React.FC<FooterProps> = () => {
   const navigate = useNavigate();
     const [user, setUser] = useState<{ email: string } | null>(null);
     useEffect(() => {

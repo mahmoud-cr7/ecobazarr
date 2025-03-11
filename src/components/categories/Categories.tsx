@@ -32,7 +32,6 @@ const Categories: React.FC = () => {
   const {
     data: categories = [],
     isLoading,
-    isError,
   } = useQuery<Category[], Error>({
     queryKey: ["categories"],
     queryFn: fetchCategories,

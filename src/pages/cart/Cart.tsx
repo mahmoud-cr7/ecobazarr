@@ -43,7 +43,6 @@ const Cart: React.FC<Cart> = ({ className }) => {
   const [user, setUser] = useState<{ email: string } | null>(null);
   const darkMode = useSelector((state: RootState) => state.theme.darkMode);
 
-  const [Shipping, setShipping] = useState(10);
   const navigate = useNavigate();
   const db = getFirestore(app);
   const couponCode = ["ECOBAZAR20", "ECOBAZAR30", "ECOBAZAR40"];
@@ -424,7 +423,7 @@ const Cart: React.FC<Cart> = ({ className }) => {
                     (acc, item) =>
                       acc +
                       item.price * (quantities[item.id] || 1) +
-                      Shipping -
+                      10 -
                       coupon,
                     0
                   )

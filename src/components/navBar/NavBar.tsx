@@ -5,26 +5,21 @@ import AddLocationIcon from "@mui/icons-material/AddLocation";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import ShoppingBagIcon from "@mui/icons-material/ShoppingBag";
 import SearchIcon from "@mui/icons-material/Search";
-import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import logoPng from "../../assets/logo.png";
 import avatar from "../../assets/avatar.png";
 import "./NavBar.css";
-import { Button, Snackbar, ToggleButton } from "@mui/material";
+import { Button, Snackbar } from "@mui/material";
 import Colors from "../../utils/Colors";
-import { Link, Navigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import TemporaryDrawer from "../drawer/Drawer";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { app, db } from "../../firebase/Firebase";
-import CheckIcon from "@mui/icons-material/Check";
-import { DarkMode, LightMode } from "@mui/icons-material";
-import LanguageIcon from "@mui/icons-material/Language";
+
 import {
   collection,
   getDocs,
   Firestore,
-  addDoc,
   doc,
-  setDoc,
   query,
   where,
   getDoc,
@@ -34,7 +29,6 @@ import { useNavigate } from "react-router-dom";
 import Wishlist from "../wishListDrawer/WishListDrawer";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../store/store";
-import { toggleDarkMode } from "../../store/themeSlice";
 
 interface NavBarProps {
   // Define your props here
@@ -69,7 +63,7 @@ const getWishListCount = async (db: Firestore): Promise<number> => {
 
   return cartSnapshot.size; // Returns the number of matching documents
 };
-const NavBar: React.FC<NavBarProps> = (props) => {
+const NavBar: React.FC<NavBarProps> = () => {
   const [isShopOpen, setIsShopOpen] = useState(false);
   const [isPagesOpen, setIsPagesOpen] = useState(false);
   const [open, setOpen] = useState(false);
@@ -77,7 +71,6 @@ const NavBar: React.FC<NavBarProps> = (props) => {
   const [user, setUser] = useState<{ email: string } | null>(null);
   const [cartCount, setCartCount] = useState(0);
   const [wishListCount, setWishListCount] = useState(0);
-  const [selected, setSelected] = useState(false);
   const [notAut, setNotAut] = useState(false);
   const [AccUser, setAccUser] = useState<{
     email: string;
@@ -94,7 +87,6 @@ const NavBar: React.FC<NavBarProps> = (props) => {
   // const [darkMode, setDarkMode] = useState(
   //   () => localStorage.getItem("theme") === "dark"
   // );
-  const dispatch = useDispatch();
   const darkMode = useSelector((state: RootState) => state.theme.darkMode);
 useEffect(() => {
   try {
@@ -155,7 +147,6 @@ useEffect(() => {
       setWishListCount(0);
     }
   }, [user]);
-  const handleLanguage = () => setSelected(!selected);
   return (
     <>
       <Snackbar
@@ -355,41 +346,6 @@ useEffect(() => {
                 Contact Us
               </Button>
             </div>
-            {/* <div className="icons-section">
-              <ToggleButton
-                value="theme"
-                selected={darkMode}
-                onClick={() => {
-                  try {
-                    dispatch(toggleDarkMode());
-                  } catch (error) {
-                    console.error("Error toggling dark mode:", error);
-                    setNotAut(true);
-                  }
-                }}
-                style={{ backgroundColor: Colors.Primary }}
-              >
-                {darkMode ? (
-                  <DarkMode style={{ color: Colors.White }} />
-                ) : (
-                  <LightMode style={{ color: Colors.White }} />
-                )}
-              </ToggleButton>
-              <div
-                className="language-icon"
-                style={{ color: Colors.White, backgroundColor: Colors.Primary }}
-                onClick={handleLanguage}
-              >
-                <LanguageIcon />
-                <ArrowDropDownIcon />
-                {selected && (
-                  <div className="language-dropdown">
-                    <p style={{ color: Colors.Primary }}>English</p>
-                    <p style={{ color: Colors.Primary }}>العربية</p>
-                  </div>
-                )}
-              </div>
-            </div> */}
           </div>
         </section>
         <TemporaryDrawer open={open} setOpen={setOpen} />

@@ -7,13 +7,9 @@ import StarIcon from "@mui/icons-material/Star";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import {
-  addDoc,
-  collection,
   deleteDoc,
   doc,
   getDoc,
-  getDocs,
-  getFirestore,
   setDoc,
   updateDoc,
 } from "firebase/firestore";
@@ -38,14 +34,7 @@ import { arrayUnion, arrayRemove } from "firebase/firestore";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store/store";
 
-interface Product {
-  id: string;
-  name: string;
-  price: number;
-  photo: string;
-  quantity: number;
-  categoryRef: string;
-}
+
 
 interface GroceryCardProps {
   id: string;
@@ -77,14 +66,11 @@ const ProductCard: React.FC<GroceryCardProps> = ({
   imageUrl,
   price,
   addedToCart: initialAddedToCart,
-  quantity,
   categoryRef,
   addedToWishlist: initialAddedToWishlist,
-  rating,
   cartUsers,
   wishUsers,
 }) => {
-  const [isFavorite, setIsFavorite] = useState(false);
   const [isInCart, setIsInCart] = useState(initialAddedToCart || false);
   const [openDialog, setOpenDialog] = useState(false);
   const [sideBarImg, setSideBarImg] = useState([imageUrl]);
@@ -113,7 +99,6 @@ const ProductCard: React.FC<GroceryCardProps> = ({
         const productRef = doc(db, "products", id);
         const productSnap = await getDoc(productRef);
         if (productSnap.exists()) {
-          const productData = productSnap.data();
           // setIsInWishlist(productData.addedToWishlist || false);
         }
       } catch (error) {
