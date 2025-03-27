@@ -1,7 +1,7 @@
 
 import React, {useState } from "react";
 import ButtonShape from "../../components/button/Button";
-import "./Home.css";
+import "./home.css";
 import Colors from "../../utils/Colors";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
