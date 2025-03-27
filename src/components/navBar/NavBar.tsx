@@ -6,7 +6,7 @@ import ShoppingBagIcon from "@mui/icons-material/ShoppingBag";
 import SearchIcon from "@mui/icons-material/Search";
 import logoPng from "../../assets/logo.png";
 import avatar from "../../assets/avatar.png";
-import "./NavBar.css";
+import "./navBar.css";
 import { Button, Snackbar } from "@mui/material";
 import Colors from "../../utils/Colors";
 import { Link } from "react-router-dom";

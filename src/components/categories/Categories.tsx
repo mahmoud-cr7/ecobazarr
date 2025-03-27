@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { getFirestore, collection, getDocs } from "firebase/firestore";
 import CategoryCard from "../category/CategoryCard";
-import "./Categories.css";
+import "./categories.css";
 import SyncIcon from "@mui/icons-material/Sync";
 import Snackbar from "@mui/material/Snackbar";
 import Colors from "../../utils/Colors";
