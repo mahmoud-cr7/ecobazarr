@@ -32,7 +32,7 @@ import SellIcon from "@mui/icons-material/Sell";
 import PersonIcon from "@mui/icons-material/Person";
 import ChatBubbleIcon from "@mui/icons-material/ChatBubble";
 import { useNavigate } from "react-router-dom";
-import "./blog.css";
+import "./Blog.css";
 import { Snackbar } from "@mui/material";
 
 interface Comment {
