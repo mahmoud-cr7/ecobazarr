@@ -30,7 +30,7 @@ import PinterestIcon from "@mui/icons-material/Pinterest";
 import RemoveShoppingCartIcon from "@mui/icons-material/RemoveShoppingCart";
 import { useQuery } from "@tanstack/react-query";
 import ProductCard from "../../components/productCard/ProductCard";
-import videoPng from "../../assets/video.png";
+import videoPng from "../../assets/Video.png";
 import discountPng from "../../assets/discount_icon.png";
 import leafPng from "../../assets/lief.png";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
