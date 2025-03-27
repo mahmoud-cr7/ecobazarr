@@ -61,9 +61,9 @@ const Wishlist: React.FC<WishlistProps> = ({
   className,
 }) => {
   const [cartItems, setCartItems] = useState<Product[]>([]);
-  const [wishlistChanged, setWishlistChanged] = useState(false);
+  const [, setWishlistChanged] = useState(false);
   const [cartStack, setCartStack] = useState(false);
-  const [cartStatus, setCartStatus] = useState<{ [key: string]: boolean }>({});
+  const [, setCartStatus] = useState<{ [key: string]: boolean }>({});
   const [allProducts, setAllProducts] = useState<{ [key: string]: Product }>(
     {}
   );

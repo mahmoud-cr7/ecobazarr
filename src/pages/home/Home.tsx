@@ -1,5 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable @typescript-eslint/no-empty-object-type */
+
 import React, {useState } from "react";
 import ButtonShape from "../../components/button/Button";
 import "./Home.css";
@@ -59,7 +58,7 @@ const shippingServices = {
 const Home: React.FC<HomeProps> = (
   { newsletterOpen } = { newsletterOpen: false }
 ) => {
-  const [timeLeft, setTimeLeft] = useState(20 * 24 * 60 * 60); // 20 days in seconds
+  const [timeLeft, ] = useState(20 * 24 * 60 * 60); // 20 days in seconds
   // useEffect(() => {
   //   if (timeLeft === 0) return; // Stop the timer when it reaches 0
 

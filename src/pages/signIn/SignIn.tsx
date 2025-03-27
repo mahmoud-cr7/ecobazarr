@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useState } from "react";
 import ButtonShape from "../../components/button/Button";
 import FormControlLabel from "@mui/material/FormControlLabel";
@@ -28,7 +27,7 @@ const SignIn: React.FC<SignInProps> = ({ signUp } = { signUp: false }) => {
     {}
   );
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [signUpSuccess, setSignUpSuccess] = useState(false);
+  const [, setSignUpSuccess] = useState(false);
     const darkMode = useSelector((state: RootState) => state.theme.darkMode);
 
   const navigate = useNavigate();
@@ -71,7 +70,7 @@ const SignIn: React.FC<SignInProps> = ({ signUp } = { signUp: false }) => {
     setErrors({});
     const auth = getAuth(app);
     signInWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
+      .then(() => {
         // Signed in
         // const user = userCredential.user;
         // ...
@@ -79,9 +78,8 @@ const SignIn: React.FC<SignInProps> = ({ signUp } = { signUp: false }) => {
         setSignUpSuccess(true);
         setSignUpSuccess(signUp);
       })
-      .catch((error) => {
-        const errorCode = error.code;
-        const errorMessage = error.message;
+      .catch(() => {
+
         setErrorMessage("Invalid email or password");
       });
 

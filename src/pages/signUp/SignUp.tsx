@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useState } from "react";
 import ButtonShape from "../../components/button/Button";
 import Colors from "../../utils/Colors";
@@ -19,7 +18,8 @@ interface SignUpProps {
   signUp: boolean;
 }
 
-const SignUp: React.FC<SignUpProps> = ({ signUp } = { signUp: false }) => {
+// eslint-disable-next-line no-empty-pattern
+const SignUp: React.FC<SignUpProps> = ({  } = { signUp: false }) => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const navigate = useNavigate();

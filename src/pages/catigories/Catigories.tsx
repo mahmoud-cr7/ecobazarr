@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable @typescript-eslint/no-empty-object-type */
 import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { getFirestore, collection, getDocs } from "firebase/firestore";
@@ -28,7 +26,7 @@ const fetchCategoriesFromFirestore = async (): Promise<Category[]> => {
 };
 
 const Categories: React.FC = () => {
-  const [errorOpen, setErrorOpen] = useState(false);
+  const [, setErrorOpen] = useState(false);
 
   const {
     data: categories = [],

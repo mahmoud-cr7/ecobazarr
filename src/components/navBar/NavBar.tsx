@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-empty-object-type */
 import { useEffect, useState } from "react";
 import AddLocationIcon from "@mui/icons-material/AddLocation";
@@ -27,7 +26,7 @@ import {
 } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
 import Wishlist from "../wishListDrawer/WishListDrawer";
-import { useDispatch, useSelector } from "react-redux";
+import {  useSelector } from "react-redux";
 import { RootState } from "../../store/store";
 
 interface NavBarProps {
@@ -64,15 +63,15 @@ const getWishListCount = async (db: Firestore): Promise<number> => {
   return cartSnapshot.size; // Returns the number of matching documents
 };
 const NavBar: React.FC<NavBarProps> = () => {
-  const [isShopOpen, setIsShopOpen] = useState(false);
-  const [isPagesOpen, setIsPagesOpen] = useState(false);
+  const [, setIsShopOpen] = useState(false);
+  const [, setIsPagesOpen] = useState(false);
   const [open, setOpen] = useState(false);
   const [faVOpen, setFavOpen] = useState(false);
   const [user, setUser] = useState<{ email: string } | null>(null);
   const [cartCount, setCartCount] = useState(0);
   const [wishListCount, setWishListCount] = useState(0);
   const [notAut, setNotAut] = useState(false);
-  const [AccUser, setAccUser] = useState<{
+  const [, setAccUser] = useState<{
     email: string;
     uid: string;
   } | null>(null);

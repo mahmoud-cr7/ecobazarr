@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-empty-object-type */
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -131,7 +130,7 @@ const Profile: React.FC<ProfileProps> = () => {
     phone: "",
   });
   const [saved, setSaved] = useState(false);
-  const [avatar, setAvatar] = useState(avatarPng);
+  const [, setAvatar] = useState(avatarPng);
   const dispatch = useDispatch();
   const [selected, setSelected] = useState(false);
 

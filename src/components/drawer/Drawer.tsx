@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import * as React from "react";
 import Box from "@mui/material/Box";
 import Drawer from "@mui/material/Drawer";
@@ -96,7 +95,7 @@ export default function TemporaryDrawer({
   const navigate = useNavigate();
   const db = getFirestore(app);
   const [user, setUser] = useState<{ email: string } | null>(null);
-  const [quantities, setQuantities] = useState<{ [key: string]: number }>({});
+  const [, setQuantities] = useState<{ [key: string]: number }>({});
   const darkMode = useSelector((state: RootState) => state.theme.darkMode);
 
   useEffect(() => {
